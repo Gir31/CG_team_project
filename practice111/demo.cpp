@@ -172,6 +172,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 GLvoid SpecialKeyboard(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_LEFT:
+		// target이 맨 왼쪽을 가르키지 않을 경우 
 		if (targetLane != 1) {
 			moveCount -= 1;
 			mFlag = TRUE;
@@ -182,6 +183,7 @@ GLvoid SpecialKeyboard(int key, int x, int y) {
 		
 		break;
 	case GLUT_KEY_RIGHT:
+		// target이 맨 오른쪽을 가르키지 않을 경우 
 		if (targetLane != MAX_LANE) {
 			moveCount += 1;
 			mFlag = TRUE;
@@ -213,7 +215,8 @@ GLvoid TimerFunction(int value) {
 	if(moveCount) moveCube(moveCount);
 	moveObstacle();
 
-	if (clock() - start_time > 2000) {
+	// 2초마다 장애물 생성
+	if (clock() - start_time > 2000) { 
 		start_time = clock();
 		timeSwitch = FALSE;
 
@@ -255,6 +258,7 @@ GLvoid cameraTranslation(glm::vec3 cameraTrans, glm::vec3 cameraRotate) {
 GLvoid moveCube(GLint count) {
 	static GLboolean rFlag = FALSE;
 
+	// 카운트가 0 미만이면 왼쪽 이동, 아니면 오른쪽 이동
 	if (count < 0) {
 		rotateCube.y += rotateValue;
 		transCube.x -= transValue;
@@ -268,8 +272,6 @@ GLvoid moveCube(GLint count) {
 			rFlag = FALSE;
 			moveCount += 1;
 			lane -= 1;
-
-			std::cout << transCube.x << std::endl;
 
 			if (mFlag) rotateValue *= -1;
 		}
@@ -292,9 +294,12 @@ GLvoid moveCube(GLint count) {
 		}
 	}
 
+	// 목표했던 레인에 도달시 movecount를 0으로 초기화
 	if (lane == targetLane) moveCount = 0;
 }
 
+
+// 장애물 생성 코드
 GLvoid createObstacle() {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -303,10 +308,11 @@ GLvoid createObstacle() {
 	OBSTACLE* newObstacle = (OBSTACLE*)malloc(sizeof(OBSTACLE));
 
 	newObstacle->next = NULL;
-	newObstacle->move.x = ((dis(gen) % 7) - 3) * 1.2f; // 0.6
+	newObstacle->move.x = ((dis(gen) % 7) - 3) * 1.2f; // x값만 랜덤으로 생성, 레인 수에 맞게 결정
 	newObstacle->move.y = 0.f;
 	newObstacle->move.z = -5.f;
 
+	// 링크드리스트로 구현
 	OBSTACLE* curr = start;
 	if (curr == NULL) start = newObstacle;
 	else {
@@ -321,6 +327,7 @@ GLvoid drawObstacle() {
 	unsigned int transformLocation = glGetUniformLocation(shaderProgramID, "model");
 
 	while (curr != NULL) {
+		// 각 장애물마다 고유 값으로 그리기
 		glm::mat4 obstacle = glm::mat4(1.f);
 		obstacle = translation_shape(curr->move);
 		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(obstacle));
@@ -355,7 +362,8 @@ GLvoid moveObstacle() {
 	while (curr != NULL) {
 		curr->move.z += 0.1f;
 
-		if (curr->move.z > 10.f) {
+		// 일정 위치 도달시 삭제
+		if (curr->move.z > 10.f) { 
 			OBSTACLE* target = curr;
 			curr = curr->next;
 
