@@ -20,12 +20,13 @@ glm::vec3 spaceTrans = glm::vec3(0.0f, 0.0f, -2.0f);
 char vertex[] = { "vertex.glsl" };
 char fragment[] = { "fragment.glsl" };
 GLuint vao, vbo[2];
+GLuint ebo;
 GLuint shaderProgramID;
 //========================================================
 // 사용자 지정 변수
 Model cube;
 
-glm::vec3 transCamera = glm::vec3(0.0f, 5.0f, 10.0f);
+glm::vec3 transCamera = glm::vec3(0.0f, 10.0f, 30.0f);
 glm::vec3 rotateCamera = glm::vec3(0, 0, 0);
 
 glm::vec3 rotateCube = glm::vec3(0, 0, 0);
@@ -77,6 +78,7 @@ int main(int argc, char** argv)
 	glewInit();
 
 	make_shaderProgram();
+	read_obj_file_with_mtl("SuperSport_Car.obj", &cube);
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -103,8 +105,7 @@ GLvoid drawScene()
 	unsigned int transformLocation = glGetUniformLocation(shaderProgramID, "model");
 
 	glUseProgram(shaderProgramID);
-
-	read_obj_file("cube.obj", &cube);
+	
 	initBuffer(&cube);
 
 	glm::mat4 moveCube = glm::mat4(1.f);
@@ -112,10 +113,10 @@ GLvoid drawScene()
 	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(moveCube));
 
 	glBindVertexArray(vao); 
-	glDrawElements(GL_TRIANGLES, cube.face_count * 3, GL_UNSIGNED_INT, 0); 
+	glDrawElements(GL_QUADS, cube.face_count, GL_UNSIGNED_INT, 0); 
 	glBindVertexArray(0); 
 
-	drawObstacle();
+	//drawObstacle();
 
 	glutSwapBuffers();
 }
@@ -227,7 +228,6 @@ GLvoid TimerFunction(int value) {
 }
 
 GLvoid initBuffer(const Model* model) {
-	GLuint ebo;
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -239,7 +239,6 @@ GLvoid initBuffer(const Model* model) {
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, model->face_count * sizeof(Face), model->faces, GL_STATIC_DRAW);
-
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	glEnableVertexAttribArray(0);
 

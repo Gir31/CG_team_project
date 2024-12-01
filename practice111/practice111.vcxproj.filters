@@ -26,6 +26,9 @@
     <ClInclude Include="obj_reader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="prac.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl">
@@ -34,9 +37,21 @@
     <None Include="vertex.glsl">
       <Filter>리소스 파일</Filter>
     </None>
+    <None Include="SuperSport_Car.mtl">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="cube.obj">
+      <Filter>리소스 파일</Filter>
+    </Object>
+    <Object Include="collswork_road_tunnel.obj">
+      <Filter>리소스 파일</Filter>
+    </Object>
+    <Object Include="SuperSport_Car.obj">
+      <Filter>리소스 파일</Filter>
+    </Object>
+    <Object Include="SuperSport_Car_A.obj">
       <Filter>리소스 파일</Filter>
     </Object>
   </ItemGroup>

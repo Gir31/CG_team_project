@@ -133,13 +133,24 @@
   <ItemGroup>
     <ClInclude Include="GL_My_header.h" />
     <ClInclude Include="obj_reader.h" />
+    <ClInclude Include="prac.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl" />
+    <None Include="SuperSport_Car.mtl" />
     <None Include="vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <Object Include="collswork_road_tunnel.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Object>
     <Object Include="cube.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="SuperSport_Car.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="SuperSport_Car_A.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </Object>
   </ItemGroup>
