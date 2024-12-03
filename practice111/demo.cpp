@@ -19,7 +19,7 @@ glm::vec3 spaceTrans = glm::vec3(0.0f, 0.0f, -2.0f);
 //========================================================
 char vertex[] = { "vertex.glsl" };
 char fragment[] = { "fragment.glsl" };
-GLuint vao, vbo[2];
+unsigned int VBO[2], VAO;
 GLuint ebo;
 GLuint shaderProgramID;
 //========================================================
@@ -112,8 +112,8 @@ GLvoid drawScene()
 	moveCube = translation_shape(transCube) * rotate_shape(rotateCube);
 	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(moveCube));
 
-	glBindVertexArray(vao); 
-	glDrawElements(GL_QUADS, cube.face_count, GL_UNSIGNED_INT, 0); 
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, cube.face_count, GL_UNSIGNED_INT, 0); 
 	glBindVertexArray(0); 
 
 	//drawObstacle();
@@ -228,21 +228,33 @@ GLvoid TimerFunction(int value) {
 }
 
 GLvoid initBuffer(const Model* model) {
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	glGenBuffers(1, &vbo[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glGenBuffers(1, &VBO[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
 	glBufferData(GL_ARRAY_BUFFER, model->vertex_count * sizeof(Vertex), model->vertices, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, model->face_count * sizeof(Face), model->faces, GL_STATIC_DRAW);
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(Vertex), (void*)(sizeof(Vertex))); //--- 노말 속성
+	glEnableVertexAttribArray(1);
 
-	glBindVertexArray(0); 
+	glBindVertexArray(0);
+
+	glUseProgram(shaderProgramID);
+	unsigned int lightPosLocation = glGetUniformLocation(shaderProgramID, "lightPos"); //--- lightPos 값 전달: (0.0, 0.0, 5.0);
+	glUniform3f(lightPosLocation, 0.0, 0.0, 5.0);
+	unsigned int lightColorLocation = glGetUniformLocation(shaderProgramID, "lightColor"); //--- lightColor 값 전달: (1.0, 1.0, 1.0) 백색
+	glUniform3f(lightColorLocation, 1.0, 1.0, 1.0);
+	unsigned int objColorLocation = glGetUniformLocation(shaderProgramID, "objectColor"); //--- object Color값 전달: (1.0, 0.5, 0.3)의 색
+	glUniform3f(objColorLocation, 0.0, 0.5, 0.3);
+	unsigned int viewPosLocation = glGetUniformLocation(shaderProgramID, "viewPos"); //--- viewPos 값 전달: 카메라 위치
+	glUniform3f(viewPosLocation, transCamera.x, transCamera.y, transCamera.z);
 } 
 
 GLvoid cameraTranslation(glm::vec3 cameraTrans, glm::vec3 cameraRotate) {
@@ -331,7 +343,7 @@ GLvoid drawObstacle() {
 		obstacle = translation_shape(curr->move);
 		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(obstacle));
 
-		glBindVertexArray(vao);
+		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, cube.face_count * 3, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 

@@ -137,7 +137,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl" />
-    <None Include="SuperSport_Car.mtl" />
+    <None Include="SuperSport_Car.mtl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
