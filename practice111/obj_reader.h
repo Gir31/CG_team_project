@@ -19,7 +19,7 @@ typedef struct {
 } Vertex;
 
 typedef struct {
-	float u, v;    // Texture coordinates
+	float u, v; // Texture coordinates
 } TextureCoord;
 
 typedef struct {
@@ -27,17 +27,19 @@ typedef struct {
 } Normal;
 
 typedef struct {
-	unsigned int v1, v2, v3, v4;
+	unsigned int v1, v2, v3, v4;         // Vertex indices
+	unsigned int vt1, vt2, vt3, vt4;    // Texture indices
+	unsigned int vn1, vn2, vn3, vn4;    // Normal indices
 } Face;
 
 typedef struct {
 	Vertex* vertices;           // Vertex positions
 	TextureCoord* texture_coords; // Texture coordinates
 	Normal* normals;            // Normals
+	Face* faces;                // Faces
 	size_t vertex_count;        // Number of vertices
 	size_t texture_count;       // Number of texture coordinates
 	size_t normal_count;        // Number of normals
-	Face* faces;                // Faces
 	size_t face_count;          // Number of faces
 } Model;
 
@@ -110,15 +112,15 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 
 	char line[MAX_LINE_LENGTH];
 	model->vertex_count = 0;
-	model->face_count = 0;
 	model->texture_count = 0;
 	model->normal_count = 0;
+	model->face_count = 0;
 
 	Material* materials = NULL;
 	size_t material_count = 0;
 	char current_material[256] = { 0 };
 
-	// 1차 스캔: 데이터 크기 계산
+	// 첫 번째 스캔: 데이터 크기 계산
 	while (fgets(line, sizeof(line), file)) {
 		read_newline(line);
 		if (line[0] == 'v' && line[1] == ' ') {
@@ -133,26 +135,18 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 		else if (line[0] == 'f' && line[1] == ' ') {
 			model->face_count++;
 		}
-		else if (strncmp(line, "mtllib", 6) == 0) {
-			char mtl_filename[256];
-			sscanf_s(line + 7, "%255s", mtl_filename, (unsigned)_countof(mtl_filename));
-			read_mtl_file(mtl_filename, &materials, &material_count);
-		}
 	}
 
 	// 메모리 할당
-	fseek(file, 0, SEEK_SET);
 	model->vertices = (Vertex*)malloc(model->vertex_count * sizeof(Vertex));
 	model->texture_coords = (TextureCoord*)malloc(model->texture_count * sizeof(TextureCoord));
 	model->normals = (Normal*)malloc(model->normal_count * sizeof(Normal));
 	model->faces = (Face*)malloc(model->face_count * sizeof(Face));
 
-	size_t vertex_index = 0;
-	size_t texture_index = 0;
-	size_t normal_index = 0;
-	size_t face_index = 0;
+	size_t vertex_index = 0, texture_index = 0, normal_index = 0, face_index = 0;
 
-	// 2차 스캔: 데이터 읽기
+	// 두 번째 스캔: 데이터 읽기
+	fseek(file, 0, SEEK_SET);
 	while (fgets(line, sizeof(line), file)) {
 		read_newline(line);
 		if (line[0] == 'v' && line[1] == ' ') {
@@ -176,39 +170,31 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 			normal_index++;
 		}
 		else if (line[0] == 'f' && line[1] == ' ') {
-			unsigned int vertices[128]; // 최대 128개의 정점 처리 가능
-			int vertex_count = 0;
+			// Face 데이터 읽기
+			unsigned int v[4], vt[4], vn[4];
+			int matches = sscanf_s(line + 2,
+				"%u/%u/%u %u/%u/%u %u/%u/%u %u/%u/%u",
+				&v[0], &vt[0], &vn[0],
+				&v[1], &vt[1], &vn[1],
+				&v[2], &vt[2], &vn[2],
+				&v[3], &vt[3], &vn[3]);
+			if (matches == 12) { // 쿼드가 제대로 읽혔는지 확인
+				model->faces[face_index].v1 = v[0] - 1;
+				model->faces[face_index].vt1 = vt[0] - 1;
+				model->faces[face_index].vn1 = vn[0] - 1;
 
-			// Face 라인을 정점 배열로 파싱
-			char* token = strtok(line + 2, " ");
-			while (token != NULL && vertex_count < 128) {
-				sscanf_s(token, "%u/%*u/%*u", &vertices[vertex_count]);
-				vertices[vertex_count]--; // OBJ는 1부터 시작하므로 0부터 시작으로 변환
-				vertex_count++;
-				token = strtok(NULL, " ");
-			}
+				model->faces[face_index].v2 = v[1] - 1;
+				model->faces[face_index].vt2 = vt[1] - 1;
+				model->faces[face_index].vn2 = vn[1] - 1;
 
-			if (vertex_count < 3) {
-				fprintf(stderr, "Error: Invalid face with less than 3 vertices\n");
-				continue;
-			}
+				model->faces[face_index].v3 = v[2] - 1;
+				model->faces[face_index].vt3 = vt[2] - 1;
+				model->faces[face_index].vn3 = vn[2] - 1;
 
-			// 다각형을 삼각형으로 분할
-			for (int i = 1; i < vertex_count - 1; i++) {
-				if (face_index >= model->face_count) { // Face 배열 확장
-					size_t new_size = model->face_count * 2;
-					model->faces = (Face*)realloc(model->faces, new_size * sizeof(Face));
-					if (!model->faces) {
-						fprintf(stderr, "Failed to reallocate memory for faces\n");
-						exit(EXIT_FAILURE);
-					}
-					model->face_count = new_size;
-				}
+				model->faces[face_index].v4 = v[3] - 1;
+				model->faces[face_index].vt4 = vt[3] - 1;
+				model->faces[face_index].vn4 = vn[3] - 1;
 
-				model->faces[face_index].v1 = vertices[0];
-				model->faces[face_index].v2 = vertices[i];
-				model->faces[face_index].v3 = vertices[i + 1];
-				model->faces[face_index].v4 = 0; // 삼각형
 				face_index++;
 			}
 		}

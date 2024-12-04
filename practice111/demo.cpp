@@ -19,12 +19,12 @@ glm::vec3 spaceTrans = glm::vec3(0.0f, 0.0f, -2.0f);
 //========================================================
 char vertex[] = { "vertex.glsl" };
 char fragment[] = { "fragment.glsl" };
-unsigned int VBO[2], VAO;
-GLuint ebo;
+unsigned int VBO[2], VAO, EBO;
 GLuint shaderProgramID;
 //========================================================
 // 사용자 지정 변수
 Model cube;
+size_t index_count = 0;
 
 glm::vec3 transCamera = glm::vec3(0.0f, 10.0f, 30.0f);
 glm::vec3 rotateCamera = glm::vec3(0, 0, 0);
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 	glewInit();
 
 	make_shaderProgram();
-	read_obj_file_with_mtl("SuperSport_Car.obj", &cube);
+	read_obj_file_with_mtl("car_s.obj", &cube);
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -113,7 +113,7 @@ GLvoid drawScene()
 	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(moveCube));
 
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, cube.face_count, GL_UNSIGNED_INT, 0); 
+	glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0); 
 
 	//drawObstacle();
@@ -228,22 +228,43 @@ GLvoid TimerFunction(int value) {
 }
 
 GLvoid initBuffer(const Model* model) {
+	unsigned int* indices = (unsigned int*)malloc(model->face_count * 6 * sizeof(unsigned int)); // 6 = 2 삼각형 * 3 인덱스
+	index_count = 0;
+
+	for (size_t i = 0; i < model->face_count; i++) {
+		// 쿼드 Face를 삼각형 두 개로 분리
+		indices[index_count++] = model->faces[i].v1;
+		indices[index_count++] = model->faces[i].v2;
+		indices[index_count++] = model->faces[i].v3;
+
+		indices[index_count++] = model->faces[i].v1;
+		indices[index_count++] = model->faces[i].v3;
+		indices[index_count++] = model->faces[i].v4;
+	}
+
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
+	// Vertex 데이터 바인딩
 	glGenBuffers(1, &VBO[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
 	glBufferData(GL_ARRAY_BUFFER, model->vertex_count * sizeof(Vertex), model->vertices, GL_STATIC_DRAW);
-
-	glGenBuffers(1, &ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, model->face_count * sizeof(Face), model->faces, GL_STATIC_DRAW);
-
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 2 * sizeof(Vertex), (void*)(sizeof(Vertex))); //--- 노말 속성
+
+	// Normal 데이터 바인딩
+	glGenBuffers(1, &VBO[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+	glBufferData(GL_ARRAY_BUFFER, model->normal_count * sizeof(Normal), model->normals, GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Normal), (void*)0);
 	glEnableVertexAttribArray(1);
 
+	// Index 데이터 바인딩
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_count * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
+	// 정리
 	glBindVertexArray(0);
 
 	glUseProgram(shaderProgramID);

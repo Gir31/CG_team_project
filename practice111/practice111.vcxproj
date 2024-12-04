@@ -143,6 +143,9 @@
     <None Include="vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <Object Include="car_s.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Object>
     <Object Include="collswork_road_tunnel.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </Object>
