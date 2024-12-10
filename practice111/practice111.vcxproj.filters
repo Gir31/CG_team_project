@@ -40,6 +40,9 @@
     <None Include="SuperSport_Car.mtl">
       <Filter>리소스 파일</Filter>
     </None>
+    <None Include="car_s.mtl">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="cube.obj">

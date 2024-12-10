@@ -136,6 +136,9 @@
     <ClInclude Include="prac.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="car_s.mtl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="fragment.glsl" />
     <None Include="SuperSport_Car.mtl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

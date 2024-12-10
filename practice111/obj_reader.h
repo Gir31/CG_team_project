@@ -37,11 +37,13 @@ typedef struct {
 	TextureCoord* texture_coords; // Texture coordinates
 	Normal* normals;            // Normals
 	Face* faces;                // Faces
+	Material material;
+
 	size_t vertex_count;        // Number of vertices
 	size_t texture_count;       // Number of texture coordinates
 	size_t normal_count;        // Number of normals
 	size_t face_count;          // Number of faces
-} Model;
+} Object;
 
 void read_newline(char* str) {
 	char* pos;
@@ -102,7 +104,7 @@ void read_mtl_file(const char* filename, Material** materials, size_t* material_
 	*material_count = count;
 }
 
-void read_obj_file_with_mtl(const char* filename, Model* model) {
+void read_obj_file_with_mtl(const char* filename, Object* model) {
 	FILE* file;
 	fopen_s(&file, filename, "r");
 	if (!file) {
@@ -119,11 +121,15 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 	Material* materials = NULL;
 	size_t material_count = 0;
 	char current_material[256] = { 0 };
+	char mtl_filename[256] = { 0 };
 
-	// 첫 번째 스캔: 데이터 크기 계산
+	// 첫 번째 스캔: 데이터 크기 계산 및 MTL 파일 이름 읽기
 	while (fgets(line, sizeof(line), file)) {
 		read_newline(line);
-		if (line[0] == 'v' && line[1] == ' ') {
+		if (strncmp(line, "mtllib", 6) == 0) {
+			sscanf_s(line + 7, "%255s", mtl_filename, (unsigned)_countof(mtl_filename));
+		}
+		else if (line[0] == 'v' && line[1] == ' ') {
 			model->vertex_count++;
 		}
 		else if (line[0] == 'v' && line[1] == 't') {
@@ -135,6 +141,13 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 		else if (line[0] == 'f' && line[1] == ' ') {
 			model->face_count++;
 		}
+	}
+
+	// MTL 파일 읽기
+	if (mtl_filename[0] != '\0') {
+		char mtl_path[MAX_LINE_LENGTH];
+		snprintf(mtl_path, sizeof(mtl_path), "%s", mtl_filename);
+		read_mtl_file(mtl_path, &materials, &material_count);
 	}
 
 	// 메모리 할당
@@ -170,7 +183,6 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 			normal_index++;
 		}
 		else if (line[0] == 'f' && line[1] == ' ') {
-			// Face 데이터 읽기
 			unsigned int v[4], vt[4], vn[4];
 			int matches = sscanf_s(line + 2,
 				"%u/%u/%u %u/%u/%u %u/%u/%u %u/%u/%u",
@@ -178,7 +190,7 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 				&v[1], &vt[1], &vn[1],
 				&v[2], &vt[2], &vn[2],
 				&v[3], &vt[3], &vn[3]);
-			if (matches == 12) { // 쿼드가 제대로 읽혔는지 확인
+			if (matches == 12) {
 				model->faces[face_index].v1 = v[0] - 1;
 				model->faces[face_index].vt1 = vt[0] - 1;
 				model->faces[face_index].vn1 = vn[0] - 1;
@@ -200,10 +212,21 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 		}
 		else if (strncmp(line, "usemtl", 6) == 0) {
 			sscanf_s(line + 7, "%255s", current_material, (unsigned)_countof(current_material));
+			std::cout << current_material << std::endl;
 		}
 	}
 
 	fclose(file);
+
+	// 재질 정보 할당
+	if (materials && material_count > 0) {
+		for (size_t i = 0; i < material_count; ++i) {
+			if (strcmp(materials[i].name, current_material) == 0) {
+				model->material = materials[i];
+				break;
+			}
+		}
+	}
 
 	// 재질 정보 해제
 	if (materials) {
@@ -213,7 +236,8 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 
 
 
-void read_obj_file(const char* filename, Model* model) {
+
+void read_obj_file(const char* filename, Object* model) {
 	FILE* file;
 	fopen_s(&file, filename, "r");
 	if (!file) {
