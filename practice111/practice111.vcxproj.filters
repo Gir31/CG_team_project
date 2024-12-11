@@ -60,5 +60,8 @@
     <Object Include="car_s.obj">
       <Filter>리소스 파일</Filter>
     </Object>
+    <Object Include="back.obj">
+      <Filter>리소스 파일</Filter>
+    </Object>
   </ItemGroup>
 </Project>

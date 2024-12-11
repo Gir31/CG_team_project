@@ -32,7 +32,7 @@ typedef struct {
 	unsigned int vn1, vn2, vn3, vn4;    // Normal indices
 } Face;
 
-typedef struct {
+typedef struct Model{
 	Vertex* vertices;           // Vertex positions
 	TextureCoord* texture_coords; // Texture coordinates
 	Normal* normals;            // Normals
@@ -43,7 +43,9 @@ typedef struct {
 	size_t texture_count;       // Number of texture coordinates
 	size_t normal_count;        // Number of normals
 	size_t face_count;          // Number of faces
-} Object;
+
+	struct Model* next;
+} Model;
 
 void read_newline(char* str) {
 	char* pos;
@@ -104,7 +106,26 @@ void read_mtl_file(const char* filename, Material** materials, size_t* material_
 	*material_count = count;
 }
 
-void read_obj_file_with_mtl(const char* filename, Object* model) {
+void add_new_model(Model** head) {
+	Model* new_model = (Model*)calloc(1, sizeof(Model));
+	if (!new_model) {
+		perror("Failed to allocate memory for a new model");
+		exit(EXIT_FAILURE);
+	}
+
+	if (*head == NULL) {
+		*head = new_model;
+	}
+	else {
+		Model* current = *head;
+		while (current->next != NULL) {
+			current = current->next;
+		}
+		current->next = new_model;
+	}
+}
+
+void read_obj_file_with_mtl(const char* filename, Model* model) {
 	FILE* file;
 	fopen_s(&file, filename, "r");
 	if (!file) {
@@ -212,99 +233,23 @@ void read_obj_file_with_mtl(const char* filename, Object* model) {
 		}
 		else if (strncmp(line, "usemtl", 6) == 0) {
 			sscanf_s(line + 7, "%255s", current_material, (unsigned)_countof(current_material));
-			std::cout << current_material << std::endl;
+
+			// 재질 정보 할당
+			if (materials && material_count > 0) {
+				for (size_t i = 0; i < material_count; ++i) {
+					if (strcmp(materials[i].name, current_material) == 0) {
+						model->material = materials[i];
+						break;
+					}
+				}
+			}
 		}
 	}
 
 	fclose(file);
-
-	// 재질 정보 할당
-	if (materials && material_count > 0) {
-		for (size_t i = 0; i < material_count; ++i) {
-			if (strcmp(materials[i].name, current_material) == 0) {
-				model->material = materials[i];
-				break;
-			}
-		}
-	}
 
 	// 재질 정보 해제
 	if (materials) {
 		free(materials);
 	}
-}
-
-
-
-
-void read_obj_file(const char* filename, Object* model) {
-	FILE* file;
-	fopen_s(&file, filename, "r");
-	if (!file) {
-		perror("Error opening file");
-		exit(EXIT_FAILURE);
-	}
-	char line[MAX_LINE_LENGTH];
-	model->vertex_count = 0;
-	model->face_count = 0;
-	while (fgets(line, sizeof(line), file)) {
-		read_newline(line);
-		if (line[0] == 'v' && line[1] == ' ')
-			model->vertex_count++;
-		else if (line[0] == 'f' && line[1] == ' ')
-			model->face_count++;
-	}
-	fseek(file, 0, SEEK_SET);
-	model->vertices = (Vertex*)malloc(model->vertex_count * sizeof(Vertex));
-	model->faces = (Face*)malloc(model->face_count * sizeof(Face));
-	size_t vertex_index = 0;    size_t face_index = 0;
-	while (fgets(line, sizeof(line), file)) {
-		read_newline(line);
-		if (line[0] == 'v' && line[1] == ' ') {
-			int result = sscanf_s(line + 2, "%f %f %f", &model->vertices[vertex_index].x,
-				&model->vertices[vertex_index].y,
-				&model->vertices[vertex_index].z);
-			vertex_index++;
-		}
-		else if (line[0] == 'f' && line[1] == ' ') {
-			unsigned int vertices[128]; // 최대 128개의 정점 처리 가능
-			int vertex_count = 0;
-
-			// Face 라인을 정점 배열로 파싱
-			char* token = strtok(line + 2, " ");
-			while (token != NULL && vertex_count < 128) {
-				sscanf_s(token, "%u/%*u/%*u", &vertices[vertex_count]);
-				vertices[vertex_count]--; // OBJ는 1부터 시작하므로 0부터 시작으로 변환
-				vertex_count++;
-				token = strtok(NULL, " ");
-			}
-
-			if (vertex_count < 3) {
-				fprintf(stderr, "Error: Invalid face with less than 3 vertices\n");
-				continue;
-			}
-
-			// 다각형을 삼각형으로 분할
-			for (int i = 1; i < vertex_count - 1; i++) {
-				if (face_index >= model->face_count) { // Face 배열 확장
-					size_t new_size = model->face_count * 2;
-					model->faces = (Face*)realloc(model->faces, new_size * sizeof(Face));
-					if (!model->faces) {
-						fprintf(stderr, "Failed to reallocate memory for faces\n");
-						exit(EXIT_FAILURE);
-					}
-					model->face_count = new_size;
-				}
-
-				model->faces[face_index].v1 = vertices[0];
-				model->faces[face_index].v2 = vertices[i];
-				model->faces[face_index].v3 = vertices[i + 1];
-				model->faces[face_index].v4 = 0; // 삼각형
-				face_index++;
-			}
-		}
-
-
-	}
-	fclose(file);
 }

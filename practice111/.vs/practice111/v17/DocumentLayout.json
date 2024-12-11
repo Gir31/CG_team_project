@@ -7,24 +7,27 @@
       "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:demo.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_My\\CG_team_project\\practice111\\obj_reader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:obj_reader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_My\\CG_team_project\\practice111\\prac.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:prac.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_My\\CG_team_project\\practice111\\fragment.glsl||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:fragment.glsl||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_My\\CG_team_project\\practice111\\SuperSport_Car.mtl||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:SuperSport_Car.mtl||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_My\\CG_team_project\\practice111\\vertex.glsl||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:vertex.glsl||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_My\\CG_team_project\\practice111\\car_s.obj||{58961B49-13E0-48C0-9258-13CBC4D40279}",
+      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:car_s.obj||{58961B49-13E0-48C0-9258-13CBC4D40279}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_My\\CG_team_project\\practice111\\car_s.mtl||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:car_s.mtl||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_My\\CG_team_project\\practice111\\GL_My_header.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:GL_My_header.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|C:\\PROGRAM FILES (X86)\\WINDOWS KITS\\10\\INCLUDE\\10.0.22621.0\\UCRT\\STDIO.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_My\\CG_team_project\\practice111\\obj_reader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:obj_reader.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -33,78 +36,43 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 215,
-          "SelectedChildIndex": 1,
+          "DockedWidth": 171,
+          "SelectedChildIndex": 4,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "SuperSport_Car.mtl",
-              "DocumentMoniker": "D:\\github_My\\CG_team_project\\practice111\\SuperSport_Car.mtl",
-              "RelativeDocumentMoniker": "SuperSport_Car.mtl",
-              "ToolTip": "D:\\github_My\\CG_team_project\\practice111\\SuperSport_Car.mtl",
-              "RelativeToolTip": "SuperSport_Car.mtl",
-              "ViewState": "AQIAACAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-12-10T05:49:53.28Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "obj_reader.h",
-              "DocumentMoniker": "D:\\github_My\\CG_team_project\\practice111\\obj_reader.h",
-              "RelativeDocumentMoniker": "obj_reader.h",
-              "ToolTip": "D:\\github_My\\CG_team_project\\practice111\\obj_reader.h",
-              "RelativeToolTip": "obj_reader.h",
-              "ViewState": "AQIAAHUAAAAAAAAAAAAAACkAAAAyAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T06:58:47.01Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "vertex.glsl",
-              "DocumentMoniker": "D:\\github_My\\CG_team_project\\practice111\\vertex.glsl",
-              "RelativeDocumentMoniker": "vertex.glsl",
-              "ToolTip": "D:\\github_My\\CG_team_project\\practice111\\vertex.glsl",
-              "RelativeToolTip": "vertex.glsl",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAABIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-11-23T05:14:14.28Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "fragment.glsl",
-              "DocumentMoniker": "D:\\github_My\\CG_team_project\\practice111\\fragment.glsl",
-              "RelativeDocumentMoniker": "fragment.glsl",
-              "ToolTip": "D:\\github_My\\CG_team_project\\practice111\\fragment.glsl",
-              "RelativeToolTip": "fragment.glsl",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAAACUAAABrAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-11-23T05:14:00.502Z",
+              "Title": "car_s.obj",
+              "DocumentMoniker": "D:\\github_My\\CG_team_project\\practice111\\car_s.obj",
+              "RelativeDocumentMoniker": "car_s.obj",
+              "ToolTip": "D:\\github_My\\CG_team_project\\practice111\\car_s.obj",
+              "RelativeToolTip": "car_s.obj",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQBSURBVEhLpVVbLNxpFD8zU6FxCcKiWYvlxXoQEimJjei6BAmGSESpS12SsVIhq4iJepq4ZCNUVkRoRJqYsk\u002B88LCykXgQYtYl6jrUNjtiZrFu29Znz/k7akZXM6lf8s3/\u002B5/vfy7fOb9zBj4HlUoVe3R0ZDg8PNyvr69PY7H1OD8/592nKCgoeICGlxcXF8Xc3JxAR/ry8vJkPr4d1Gq1Eo2/IcMlJSUiLy9PTE1NCZT92dLS8pA/\u002BzIUFRX9gIbeIgTuRXR0tLTIydraGt3EWFtbq5TJZKzxeSj4KYGMt7a2/qLX679pbGyE1dVVPgHY39\u002BH\u002Bfl5CAgIuJuSknL/9PRUPzk5\u002BZqPITc39/vj4\u002BN3JpPpkEWW4LS8RSNSWi4jv746OzvpFrResSr09/eXou729PT0C1tb2zssliCnHypodXV128HBgWdbWxssLy9Lh\u002BaQy\u002BWADiAnJ4fIoYuMjFS7u7t/1d7eXqJUKptOTk7u4e0eGY3Gl05OTndZDWRExaampo6NjY0AMm6elksoFAqIiYmhQMDe3p6lV0AyQG9vL4SHh0N6ejosLS31ZWVlPUVbBhledWdzc9MNcw8rKyusYgkqqJeXFzg6OrLEEgaDAfb29sDOzg5SU1MhOzv7XzSuDQ4OziUHB\u002Bvr6w5IP9ja2mKVC1DkLi4u0hO/A8wzeHh48OlF4bHY/HaF4uJiSE5OplS\u002BUNjY2LxOSkq67\u002B/v70y5JyUC5Tw2NhaQkpCRkQFCCNDpdDAwMADIIvD19ZVqRZGbw8fHBxISEsDNzW2zubn5ubyhoeHXurq6J4GBgX/hE/z8/KQPo6KiID8/HxwcHH6XBNcwMzMDSGd\u002BuwDpkg229YRs8xEApigLU2CanZ29pOIHTNlvQUFBX\u002BNeYBElmtL\u002Bcmk0GhEXFyfJqRFJl2yQLTZriZqaGiUqbpAyFm4cFb8jOb3/nwP8RmAaRGFhocAeEP8g0MbNQ5HYUlFRkYJRaL29vV1ZfKMDWru7u4LGCu1R7/3CwsLPrGY9SPkmB7SQhaKqqkoMDw/TLcTo6KjG1dVVahiLtrYGXV1dvLsCNRo2qtSkZ2dn1JSq7u7uD2lpaWqrRiJFqdVqoa\u002BvjyU3A2kPOMsgPj7\u002B3c7OTqfVDnj7EZh3wDkkRW8OZ2dn\u002BieEiIiIv8fHxzVWOcBR/Ji30NHRoUIyhNDsGRoaYukFPD09obS0FEJCQkw9PT3PysrKnvOR9QgNDfXDG/2BHSwqKyulwtPCiSomJiaISQIdV\u002BB4kSb1FyEzMzMC86vb3t4WyHuBo0SMjY0Ro3YHBwcr\u002BbPbITExMRijnSaK4tigyI1Ykx9vFfl1hIWFfYtRL\u002BBf5fnIyMhPLDYDwH\u002B2no8FQKKllQAAAABJRU5ErkJggg==",
+              "WhenOpened": "2024-12-11T07:36:34.06Z",
               "EditorCaption": ""
-            }
-          ]
-        },
-        {
-          "DockedWidth": 215,
-          "SelectedChildIndex": 1,
-          "Children": [
+            },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
               "Title": "car_s.mtl",
               "DocumentMoniker": "D:\\github_My\\CG_team_project\\practice111\\car_s.mtl",
               "RelativeDocumentMoniker": "car_s.mtl",
               "ToolTip": "D:\\github_My\\CG_team_project\\practice111\\car_s.mtl",
               "RelativeToolTip": "car_s.mtl",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-12-10T05:12:24.412Z",
+              "WhenOpened": "2024-12-11T07:30:51.811Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "stdio.h",
+              "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\stdio.h",
+              "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\ucrt\\stdio.h",
+              "ViewState": "AQIAAHUIAAAAAAAAAAAMwIcIAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-12-11T07:02:46.191Z",
               "EditorCaption": ""
             },
             {
@@ -115,9 +83,69 @@
               "RelativeDocumentMoniker": "demo.cpp",
               "ToolTip": "D:\\github_My\\CG_team_project\\practice111\\demo.cpp",
               "RelativeToolTip": "demo.cpp",
-              "ViewState": "AQIAAAQBAAAAAAAAAAAawB0BAAACAAAA",
+              "ViewState": "AQIAAFQAAAAAAAAAAAAiwG8AAAAZAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-23T05:12:13.595Z",
+              "WhenOpened": "2024-12-11T06:32:59.917Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "GL_My_header.h",
+              "DocumentMoniker": "D:\\github_My\\CG_team_project\\practice111\\GL_My_header.h",
+              "RelativeDocumentMoniker": "GL_My_header.h",
+              "ToolTip": "D:\\github_My\\CG_team_project\\practice111\\GL_My_header.h",
+              "RelativeToolTip": "GL_My_header.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAADUAAAA2AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-12-11T03:19:57.034Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "prac.h",
+              "DocumentMoniker": "D:\\github_My\\CG_team_project\\practice111\\prac.h",
+              "RelativeDocumentMoniker": "prac.h",
+              "ToolTip": "D:\\github_My\\CG_team_project\\practice111\\prac.h",
+              "RelativeToolTip": "prac.h",
+              "ViewState": "AQIAAOcAAAAAAAAAAAAAAPcAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-12-11T03:19:41.708Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "FloatingWindowState": {
+        "Id": "44c4a34e-5b42-4544-a57b-926339e91314",
+        "Display": 0,
+        "X": 137,
+        "Y": 129,
+        "Width": 778,
+        "Height": 895,
+        "WindowState": 0
+      },
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "obj_reader.h",
+              "DocumentMoniker": "D:\\github_My\\CG_team_project\\practice111\\obj_reader.h",
+              "RelativeDocumentMoniker": "obj_reader.h",
+              "ToolTip": "D:\\github_My\\CG_team_project\\practice111\\obj_reader.h",
+              "RelativeToolTip": "obj_reader.h",
+              "ViewState": "AQIAAKIAAAAAAAAAAAAAALcAAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-12-11T06:43:45.706Z",
               "EditorCaption": ""
             }
           ]

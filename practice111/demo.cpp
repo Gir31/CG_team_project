@@ -1,5 +1,6 @@
 ﻿#include "GL_My_header.h"
-#include "obj_reader.h"
+//#include "obj_reader.h"
+#include "prac.h"
 //========================================================
 #define PI 3.141592f
 #define MAX_LANE 7
@@ -23,7 +24,7 @@ unsigned int VBO[2], VAO, EBO;
 GLuint shaderProgramID;
 //========================================================
 // 사용자 지정 변수
-Object cube;
+Model* cube = NULL;
 size_t index_count = 0;
 
 glm::vec3 transCamera = glm::vec3(0.0f, 10.0f, 30.0f);
@@ -53,7 +54,7 @@ GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid SpecialKeyboard(int key, int x, int y);
 GLvoid TimerFunction(int value);
 void make_shaderProgram();
-GLvoid initBuffer(const Object* object);
+GLvoid initBuffer(const Model* model);
 //========================================================
 // 사용자 지정 함수
 GLvoid cameraTranslation(glm::vec3 cameraTrans, glm::vec3 cameraRotate);
@@ -78,7 +79,7 @@ int main(int argc, char** argv)
 	glewInit();
 
 	make_shaderProgram();
-	read_obj_file_with_mtl("SuperSport_Car.obj", &cube);
+	prac_read_obj_file_with_mtl("SuperSport_Car.obj", &cube);
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -106,17 +107,21 @@ GLvoid drawScene()
 
 	glUseProgram(shaderProgramID);
 	
-	initBuffer(&cube);
+	Model* curr_model = cube;
+	while (curr_model != NULL) {
+		initBuffer(curr_model);
 
-	glm::mat4 moveCube = glm::mat4(1.f);
-	moveCube = translation_shape(transCube) * rotate_shape(rotateCube);
-	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(moveCube));
+		glm::mat4 moveCube = glm::mat4(1.f);
+		moveCube = translation_shape(transCube) * rotate_shape(rotateCube);
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(moveCube));
 
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0); 
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
 
-	//drawObstacle();
+		curr_model = curr_model->next;
+	}
+
 
 	glutSwapBuffers();
 }
@@ -227,19 +232,19 @@ GLvoid TimerFunction(int value) {
 	glutTimerFunc(10, TimerFunction, 1);
 }
 
-GLvoid initBuffer(const Object* object) {
-	unsigned int* indices = (unsigned int*)malloc(object->face_count * 6 * sizeof(unsigned int)); // 6 = 2 삼각형 * 3 인덱스
+GLvoid initBuffer(const Model* model) {
+	unsigned int* indices = (unsigned int*)malloc(model->face_count * 6 * sizeof(unsigned int)); // 6 = 2 삼각형 * 3 인덱스
 	index_count = 0;
 
-	for (size_t i = 0; i < object->face_count; i++) {
+	for (size_t i = 0; i < model->face_count; i++) {
 		// 쿼드 Face를 삼각형 두 개로 분리
-		indices[index_count++] = object->faces[i].v1;
-		indices[index_count++] = object->faces[i].v2;
-		indices[index_count++] = object->faces[i].v3;
+		indices[index_count++] = model->faces[i].v1;
+		indices[index_count++] = model->faces[i].v2;
+		indices[index_count++] = model->faces[i].v3;
 
-		indices[index_count++] = object->faces[i].v1;
-		indices[index_count++] = object->faces[i].v3;
-		indices[index_count++] = object->faces[i].v4;
+		indices[index_count++] = model->faces[i].v1;
+		indices[index_count++] = model->faces[i].v3;
+		indices[index_count++] = model->faces[i].v4;
 	}
 
 	glGenVertexArrays(1, &VAO);
@@ -248,14 +253,14 @@ GLvoid initBuffer(const Object* object) {
 	// Vertex 데이터 바인딩
 	glGenBuffers(1, &VBO[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-	glBufferData(GL_ARRAY_BUFFER, object->vertex_count * sizeof(Vertex), object->vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, model->vertex_count * sizeof(Vertex), model->vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	// Normal 데이터 바인딩
 	glGenBuffers(1, &VBO[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-	glBufferData(GL_ARRAY_BUFFER, object->normal_count * sizeof(Normal), object->normals, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, model->normal_count * sizeof(Normal), model->normals, GL_STATIC_DRAW);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Normal), (void*)0);
 	glEnableVertexAttribArray(1);
 
@@ -272,17 +277,17 @@ GLvoid initBuffer(const Object* object) {
 	glUniform3f(lightPosLocation, 0.0, 3.0, 0.0);
 	unsigned int lightColorLocation = glGetUniformLocation(shaderProgramID, "lightColor"); //--- lightColor 값 전달: (1.0, 1.0, 1.0) 백색
 	glUniform3f(lightColorLocation, 1.0, 1.0, 1.0);
-	unsigned int objColorLocation = glGetUniformLocation(shaderProgramID, "objectColor"); //--- object Color값 전달: (1.0, 0.5, 0.3)의 색
+	unsigned int objColorLocation = glGetUniformLocation(shaderProgramID, "modelColor"); //--- model Color값 전달: (1.0, 0.5, 0.3)의 색
 	glUniform3f(objColorLocation, 0.0, 0.5, 0.3);
 	unsigned int viewPosLocation = glGetUniformLocation(shaderProgramID, "viewPos"); //--- viewPos 값 전달: 카메라 위치
 	glUniform3f(viewPosLocation, transCamera.x, transCamera.y, transCamera.z);
 
 	unsigned int material_ambient = glGetUniformLocation(shaderProgramID, "Ka"); //--- lightPos 값 전달: (0.0, 0.0, 5.0);
-	glUniform3f(material_ambient, object->material.Ka[0], object->material.Ka[1], object->material.Ka[2]);
+	glUniform3f(material_ambient, model->material.Ka[0], model->material.Ka[1], model->material.Ka[2]);
 	unsigned int material_diffuse = glGetUniformLocation(shaderProgramID, "Kd"); //--- lightColor 값 전달: (1.0, 1.0, 1.0) 백색
-	glUniform3f(material_diffuse, object->material.Kd[0], object->material.Kd[1], object->material.Kd[2]);
-	unsigned int material_specular = glGetUniformLocation(shaderProgramID, "Ks"); //--- object Color값 전달: (1.0, 0.5, 0.3)의 색
-	glUniform3f(material_specular, object->material.Ks[0], object->material.Ks[1], object->material.Ks[2]);
+	glUniform3f(material_diffuse, model->material.Kd[0], model->material.Kd[1], model->material.Kd[2]);
+	unsigned int material_specular = glGetUniformLocation(shaderProgramID, "Ks"); //--- model Color값 전달: (1.0, 0.5, 0.3)의 색
+	glUniform3f(material_specular, model->material.Ks[0], model->material.Ks[1], model->material.Ks[2]);
 } 
 
 GLvoid cameraTranslation(glm::vec3 cameraTrans, glm::vec3 cameraRotate) {
@@ -372,7 +377,7 @@ GLvoid drawObstacle() {
 		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(obstacle));
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, cube.face_count * 3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, cube->face_count * 3, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
 		curr = curr->next;
