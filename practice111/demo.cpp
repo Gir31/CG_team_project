@@ -42,6 +42,10 @@ glm::vec3 trans_car = glm::vec3(0, 0, 10.f);
 GLint speed_value = 200;
 GLint acceleration = -2;
 
+GLboolean is_colliding = FALSE;
+GLint original_speed = 200; // speed_value의 기본값 저장
+
+
 // 배경 변수
 glm::vec3 trans_background[2] = { glm::vec3(0, -10.f, -200.f), glm::vec3(0, -10.f, -700.f) };
 
@@ -69,9 +73,9 @@ GLvoid speed_camera_move();
 GLvoid move_background();
 
 GLvoid createObstacle();
-GLvoid drawObstacle(); 
+GLvoid drawObstacle();
 GLvoid removeObstacle(OBSTACLE* target);
-GLvoid moveObstacle(); 
+GLvoid moveObstacle();
 //========================================================
 
 int main(int argc, char** argv)
@@ -101,39 +105,43 @@ int main(int argc, char** argv)
 	glutMainLoop();
 }
 
-GLvoid drawScene()
-{
+GLvoid drawScene() {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (!is_colliding) { // 충돌 상태가 아니면 화면 초기화
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 
 	Perspective_Projection_Transformation(projection, spaceTrans, shaderProgramID);
 	cameraTranslation(transCamera, rotateCamera);
 
 	glUseProgram(shaderProgramID);
 
-	if (transformLocation == NULL) transformLocation = glGetUniformLocation(shaderProgramID, "model");
-	
+	if (transformLocation == NULL)
+		transformLocation = glGetUniformLocation(shaderProgramID, "model");
+
+	// 주인공(car_s) 그리기
 	glm::mat4 main_car_model = glm::mat4(1.f);
 	main_car_model = translation_shape(trans_car) * rotate_shape(rotate_car);
 	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(main_car_model));
 	draw_model(main_car);
 
-	glm::mat4 background_model = glm::mat4(1.f);
-	background_model = translation_shape(trans_background[0]) * rotate_shape(glm::vec3(0, 90, 0));
-	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(background_model));
-	draw_model(background);
+	if (!is_colliding) { // 충돌 상태가 아니면 배경과 장애물 그리기
+		for (int i = 0; i < 2; i++) {
+			glm::mat4 background_model = glm::mat4(1.f);
+			background_model = translation_shape(trans_background[i]) * rotate_shape(glm::vec3(0, 90, 0));
+			glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(background_model));
+			draw_model(background);
+		}
 
-	glm::mat4 background_model2 = glm::mat4(1.f);
-	background_model2 = translation_shape(trans_background[1]) * rotate_shape(glm::vec3(0, 90, 0));
-	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(background_model2));
-	draw_model(background);
-
+		drawObstacle();
+	}
 
 	glutSwapBuffers();
 }
+
 
 GLvoid Reshape(int w, int h)
 {
@@ -160,7 +168,7 @@ void make_shaderProgram()
 
 GLvoid Mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		
+
 	}
 	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
 	}
@@ -169,7 +177,7 @@ GLvoid Mouse(int button, int state, int x, int y) {
 
 void Motion(int x, int y) {
 	if (left_button) {
-		
+
 	}
 	glutPostRedisplay();
 }
@@ -187,10 +195,12 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 GLvoid SpecialKeyboard(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_LEFT:
-
+		if (trans_car.x > -6.6f) // 레인 제한
+			trans_car.x -= 1.2f;
 		break;
 	case GLUT_KEY_RIGHT:
-
+		if (trans_car.x < 6.6f) // 레인 제한
+			trans_car.x += 1.2f;
 		break;
 	case GLUT_KEY_UP:
 		speed_flag = TRUE;
@@ -202,14 +212,37 @@ GLvoid SpecialKeyboard(int key, int x, int y) {
 	glutPostRedisplay();
 }
 
+
 GLvoid TimerFunction(int value) {
-	glutPostRedisplay();
+	static int obstacle_timer = 0;
 
-	speed_camera_move(); 
+	// 장애물 생성 주기
+	obstacle_timer++;
+	if (obstacle_timer >= 50) {
+		// 최대 4개 이상 유지
+		int count = 0;
+		OBSTACLE* curr = start;
+		while (curr != NULL) {
+			count++;
+			curr = curr->next;
+		}
+
+		if (count < 10) {
+			createObstacle();
+		}
+
+		obstacle_timer = 0;
+	}
+
+	speed_camera_move();
 	move_background();
+	moveObstacle();
 
+	glutPostRedisplay();
 	glutTimerFunc(10, TimerFunction, 1);
 }
+
+
 
 GLvoid initBuffer(const Model* model) {
 	glGenVertexArrays(1, &VAO);
@@ -238,7 +271,7 @@ GLvoid initBuffer(const Model* model) {
 	glUniform3f(material_diffuse, model->material.Kd[0], model->material.Kd[1], model->material.Kd[2]);
 	unsigned int material_specular = glGetUniformLocation(shaderProgramID, "Ks"); //--- model의 specular 값 전달
 	glUniform3f(material_specular, model->material.Ks[0], model->material.Ks[1], model->material.Ks[2]);
-} 
+}
 
 GLvoid draw_model(Model* model) {
 	Model* curr_model = model;
@@ -272,10 +305,10 @@ GLvoid speed_camera_move() {
 		acceleration = 8;
 		speed_flag = FALSE;
 	}
-	
+
 	speed_value += acceleration;
 
-	transCamera.z = ((GLfloat)speed_value / 4); 
+	transCamera.z = ((GLfloat)speed_value / 4);
 }
 
 GLvoid move_background() {
@@ -286,42 +319,50 @@ GLvoid move_background() {
 	}
 }
 
-// 장애물 생성 코드
 GLvoid createObstacle() {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<int> dis(1, 7);
+	std::uniform_int_distribution<int> lane_dist(1, MAX_LANE);
+	std::uniform_real_distribution<float> z_dist(-900.0f, -700.0f); // 장애물 생성 범위를 -900 ~ -700으로 확장
 
 	OBSTACLE* newObstacle = (OBSTACLE*)malloc(sizeof(OBSTACLE));
-
 	newObstacle->next = NULL;
-	newObstacle->move.x = ((dis(gen) % 7) - 3) * 1.2f; // x값만 랜덤으로 생성, 레인 수에 맞게 결정
-	newObstacle->move.y = 0.f;
-	newObstacle->move.z = -5.f;
+	newObstacle->move.x = ((lane_dist(gen) - 4) * 2.2f); // 레인에 맞춰 x 좌표 설정
+	newObstacle->move.y = 0.0f;
+	newObstacle->move.z = z_dist(gen); // 카메라 밖에서 생성
 
-	// 링크드리스트로 구현
+	// 링크드리스트로 추가
 	OBSTACLE* curr = start;
-	if (curr == NULL) start = newObstacle;
+	if (curr == NULL) {
+		start = newObstacle;
+	}
 	else {
-		while (curr->next != NULL) { curr = curr->next; }
-
+		while (curr->next != NULL) {
+			curr = curr->next;
+		}
 		curr->next = newObstacle;
 	}
 }
+
 
 GLvoid drawObstacle() {
 	OBSTACLE* curr = start;
 	unsigned int transformLocation = glGetUniformLocation(shaderProgramID, "model");
 
 	while (curr != NULL) {
-		// 각 장애물마다 고유 값으로 그리기
-		glm::mat4 obstacle = glm::mat4(1.f);
-		obstacle = translation_shape(curr->move);
-		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(obstacle));
+		// 장애물의 변환 행렬 설정
+		glm::mat4 obstacle_model = glm::mat4(1.f);
+		obstacle_model = translation_shape(curr->move);
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(obstacle_model));
+
+		// 주인공과 같은 모델(car_s.obj)을 사용하여 그리기
+		draw_model(main_car);
 
 		curr = curr->next;
 	}
 }
+
+
 
 GLvoid removeObstacle(OBSTACLE* target) {
 	OBSTACLE* curr = start;
@@ -336,23 +377,44 @@ GLvoid removeObstacle(OBSTACLE* target) {
 		curr->next = target->next;
 		free(target);
 	}
-	
+
+}
+
+GLboolean checkCollision(glm::vec3 car, glm::vec3 obstacle) {
+	float distance = glm::length(car - obstacle);
+	return distance < 1.5f; // 충돌 판정 거리
 }
 
 GLvoid moveObstacle() {
 	OBSTACLE* curr = start;
 
 	while (curr != NULL) {
-		curr->move.z += 0.1f;
+		curr->move.z += speed_value / 100.0f;
 
-		// 일정 위치 도달시 삭제
-		if (curr->move.z > 10.f) { 
-			OBSTACLE* target = curr;
-			curr = curr->next;
+		// 충돌 검사
+		if (!is_colliding && checkCollision(trans_car, curr->move)) {
+			printf("Collision detected!\n");
+			is_colliding = TRUE;
 
-			removeObstacle(target);
+			// 속도를 저장하고 배경 멈추기
+			original_speed = speed_value;
+			speed_value = 0;
+
+			// 0.5초 후 속도 복구
+			glutTimerFunc(500, [](int value) {
+				speed_value = original_speed;
+				is_colliding = FALSE;
+				}, 0);
 		}
 
-		if(curr != NULL) curr = curr->next;
+		// 화면 넘어가는 장애물 제거
+		if (curr->move.z > 50.0f) {
+			OBSTACLE* target = curr;
+			curr = curr->next;
+			removeObstacle(target);
+		}
+		else {
+			curr = curr->next;
+		}
 	}
 }
