@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
 
 #define MAX_LINE_LENGTH 256
 
@@ -32,7 +33,7 @@ typedef struct {
 	unsigned int vn1, vn2, vn3, vn4;    // Normal indices
 } Face;
 
-typedef struct Model{
+typedef struct Model {
 	Vertex* vertices;           // Vertex positions
 	TextureCoord* texture_coords; // Texture coordinates
 	Normal* normals;            // Normals
@@ -54,11 +55,13 @@ void read_newline(char* str) {
 }
 
 void read_mtl_file(const char* filename, Material** materials, size_t* material_count) {
+	std::cout << "=====[Read MTL File Start]==============================================================================================" << std::endl;
 
 	FILE* file;
 	fopen_s(&file, filename, "r");
 	if (!file) {
 		perror("Error opening MTL file");
+		return;
 		exit(EXIT_FAILURE);
 	}
 
@@ -77,6 +80,7 @@ void read_mtl_file(const char* filename, Material** materials, size_t* material_
 				memset(&current_material, 0, sizeof(Material)); // 새 재질 초기화
 			}
 			sscanf_s(line + 7, "%255s", current_material.name, (unsigned)_countof(current_material.name));
+			std::cout << "		New Material Add : [ " << current_material.name << " ]" << std::endl;
 		}
 		else if (strncmp(line, "Ka", 2) == 0) {
 			sscanf_s(line + 2, "%f %f %f", &current_material.Ka[0], &current_material.Ka[1], &current_material.Ka[2]);
@@ -104,29 +108,45 @@ void read_mtl_file(const char* filename, Material** materials, size_t* material_
 
 	*materials = material_list;
 	*material_count = count;
+
+	std::cout << "=====[Read MTL File End]================================================================================================" << std::endl;
 }
 
-void add_new_model(Model** head) {
-	Model* new_model = (Model*)calloc(1, sizeof(Model));
-	if (!new_model) {
-		perror("Failed to allocate memory for a new model");
-		exit(EXIT_FAILURE);
+void match_normal_and_vertex(Model** model) {
+	Model* new_model = *model;
+
+	Normal* normal_list = (Normal*)malloc(new_model->normal_count * sizeof(Normal));
+
+	for (int i = 0; i < new_model->normal_count; i++) {
+		normal_list[i].x = new_model->normals[i].x;
+		normal_list[i].y = new_model->normals[i].y;
+		normal_list[i].z = new_model->normals[i].z;
+	}
+	for (int i = 0; i < new_model->face_count; i++) {
+		new_model->normals[new_model->faces[i].v1].x = normal_list[new_model->faces[i].vn1].x;
+		new_model->normals[new_model->faces[i].v1].y = normal_list[new_model->faces[i].vn1].y;
+		new_model->normals[new_model->faces[i].v1].z = normal_list[new_model->faces[i].vn1].z;
+
+		new_model->normals[new_model->faces[i].v2].x = normal_list[new_model->faces[i].vn2].x;
+		new_model->normals[new_model->faces[i].v2].y = normal_list[new_model->faces[i].vn2].y;
+		new_model->normals[new_model->faces[i].v2].z = normal_list[new_model->faces[i].vn2].z;
+
+		new_model->normals[new_model->faces[i].v3].x = normal_list[new_model->faces[i].vn3].x;
+		new_model->normals[new_model->faces[i].v3].y = normal_list[new_model->faces[i].vn3].y;
+		new_model->normals[new_model->faces[i].v3].z = normal_list[new_model->faces[i].vn3].z;
+
+		new_model->normals[new_model->faces[i].v4].x = normal_list[new_model->faces[i].vn4].x;
+		new_model->normals[new_model->faces[i].v4].y = normal_list[new_model->faces[i].vn4].y;
+		new_model->normals[new_model->faces[i].v4].z = normal_list[new_model->faces[i].vn4].z;
 	}
 
-	if (*head == NULL) {
-		*head = new_model;
-	}
-	else {
-		Model* current = *head;
-		while (current->next != NULL) {
-			current = current->next;
-		}
-		current->next = new_model;
-	}
+	free(normal_list);
 }
 
-void read_obj_file_with_mtl(const char* filename, Model* model) {
-	FILE* file;
+void read_obj_file_with_mtl(const char* filename, Model** model) {
+	std::cout << "=====[Read Obj File Start]==============================================================================================" << std::endl; \
+		FILE* file;
+
 	fopen_s(&file, filename, "r");
 	if (!file) {
 		perror("Error opening OBJ file");
@@ -134,102 +154,177 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 	}
 
 	char line[MAX_LINE_LENGTH];
-	model->vertex_count = 0;
-	model->texture_count = 0;
-	model->normal_count = 0;
-	model->face_count = 0;
 
 	Material* materials = NULL;
 	size_t material_count = 0;
 	char current_material[256] = { 0 };
 	char mtl_filename[256] = { 0 };
 
+	Model* start_model = NULL;
+
 	// 첫 번째 스캔: 데이터 크기 계산 및 MTL 파일 이름 읽기
+	std::cout << "	[ 데이터 크기 계산 시작 ]" << std::endl;
 	while (fgets(line, sizeof(line), file)) {
 		read_newline(line);
 		if (strncmp(line, "mtllib", 6) == 0) {
 			sscanf_s(line + 7, "%255s", mtl_filename, (unsigned)_countof(mtl_filename));
 		}
+		else if (line[0] == 'o' && line[1] == ' ') {
+			if (start_model == NULL) {
+				start_model = (Model*)calloc(1, sizeof(Model));
+				*model = start_model;
+				std::cout << "		[ 시작 모델에 메모리 준비 성공 ]" << std::endl;
+			}
+			else {
+				std::cout << "			[ 현재 모델에 메모리 할당 시작 ]" << std::endl;
+				start_model->vertices = (Vertex*)malloc(start_model->vertex_count * sizeof(Vertex));
+				start_model->texture_coords = (TextureCoord*)malloc(start_model->texture_count * sizeof(TextureCoord));
+				start_model->normals = (Normal*)malloc(start_model->vertex_count * sizeof(Normal));
+				start_model->faces = (Face*)malloc(start_model->face_count * sizeof(Face));
+				std::cout << "				vertex_count : " << start_model->vertex_count << "개 | texture_count : "
+					<< start_model->texture_count << "개 | normal_count : " << start_model->normal_count
+					<< "개 | face_count : " << start_model->face_count << std::endl;
+				std::cout << "			[ 현재 모델에 메모리 할당 성공 ]" << std::endl;
+
+				Model* new_model = (Model*)calloc(1, sizeof(Model));
+
+				start_model->next = new_model;
+				start_model = start_model->next;
+
+				std::cout << "		[ 다음 모델에 메모리 준비 성공 ]" << std::endl;
+			}
+		}
 		else if (line[0] == 'v' && line[1] == ' ') {
-			model->vertex_count++;
+			start_model->vertex_count++;
 		}
 		else if (line[0] == 'v' && line[1] == 't') {
-			model->texture_count++;
+			start_model->texture_count++;
 		}
 		else if (line[0] == 'v' && line[1] == 'n') {
-			model->normal_count++;
+			start_model->normal_count++;
 		}
 		else if (line[0] == 'f' && line[1] == ' ') {
-			model->face_count++;
+			start_model->face_count++;
 		}
 	}
+	// 마지막 모델에 메모리 할당
+	std::cout << "			[ 현재 모델에 메모리 할당 시작 ]" << std::endl;
+	start_model->vertices = (Vertex*)malloc(start_model->vertex_count * sizeof(Vertex));
+	start_model->texture_coords = (TextureCoord*)malloc(start_model->texture_count * sizeof(TextureCoord));
+	start_model->normals = (Normal*)malloc(start_model->vertex_count * sizeof(Normal));
+	start_model->faces = (Face*)malloc(start_model->face_count * sizeof(Face));
+	std::cout << "				vertex_count : " << start_model->vertex_count << "개 | texture_count : " << start_model->texture_count
+		<< "개 | normal_count : " << start_model->normal_count << "개 | face_count : " << start_model->face_count << std::endl;
+	std::cout << "			[ 현재 모델에 메모리 할당 성공 ]" << std::endl;
+
+	std::cout << "	[ 데이터 크기 계산 종료 ]" << std::endl;
 
 	// MTL 파일 읽기
 	if (mtl_filename[0] != '\0') {
+
 		char mtl_path[MAX_LINE_LENGTH];
 		snprintf(mtl_path, sizeof(mtl_path), "%s", mtl_filename);
 		read_mtl_file(mtl_path, &materials, &material_count);
 	}
 
-	// 메모리 할당
-	model->vertices = (Vertex*)malloc(model->vertex_count * sizeof(Vertex));
-	model->texture_coords = (TextureCoord*)malloc(model->texture_count * sizeof(TextureCoord));
-	model->normals = (Normal*)malloc(model->normal_count * sizeof(Normal));
-	model->faces = (Face*)malloc(model->face_count * sizeof(Face));
-
+	start_model = *model; // 처음 위치로 되돌리기
+	int model_count = 0;
 	size_t vertex_index = 0, texture_index = 0, normal_index = 0, face_index = 0;
+	size_t vertex_count = 0, normal_count = 0;
 
-	// 두 번째 스캔: 데이터 읽기
+	// 두 번째 스캔 : 데이터 읽기
+	std::cout << "	[ 데이터 읽기 시작 ]" << std::endl;
 	fseek(file, 0, SEEK_SET);
 	while (fgets(line, sizeof(line), file)) {
 		read_newline(line);
-		if (line[0] == 'v' && line[1] == ' ') {
+		if (line[0] == 'o' && line[1] == ' ') {
+			if (start_model == *model && model_count == 0) {
+				std::cout << "		[ 현재 모델에 데이터 삽입 시작 ]" << std::endl;
+				model_count++;
+				continue;
+			}
+			else {
+				std::cout << "		[ 현재 모델에 데이터 삽입 종료 ]" << std::endl;
+				start_model = start_model->next;
+				vertex_count += vertex_index;
+				normal_count += normal_index;
+				vertex_index = 0; texture_index = 0; normal_index = 0; face_index = 0;
+
+				std::cout << "		[ 현재 모델에 데이터 삽입 시작 ]" << std::endl;
+			}
+		}
+		else if (line[0] == 'v' && line[1] == ' ') {
 			sscanf_s(line + 2, "%f %f %f",
-				&model->vertices[vertex_index].x,
-				&model->vertices[vertex_index].y,
-				&model->vertices[vertex_index].z);
+				&start_model->vertices[vertex_index].x,
+				&start_model->vertices[vertex_index].y,
+				&start_model->vertices[vertex_index].z);
 			vertex_index++;
 		}
 		else if (line[0] == 'v' && line[1] == 't') {
 			sscanf_s(line + 2, "%f %f",
-				&model->texture_coords[texture_index].u,
-				&model->texture_coords[texture_index].v);
+				&start_model->texture_coords[texture_index].u,
+				&start_model->texture_coords[texture_index].v);
 			texture_index++;
 		}
 		else if (line[0] == 'v' && line[1] == 'n') {
 			sscanf_s(line + 2, "%f %f %f",
-				&model->normals[normal_index].x,
-				&model->normals[normal_index].y,
-				&model->normals[normal_index].z);
+				&start_model->normals[normal_index].x,
+				&start_model->normals[normal_index].y,
+				&start_model->normals[normal_index].z);
 			normal_index++;
 		}
 		else if (line[0] == 'f' && line[1] == ' ') {
-			unsigned int v[4], vt[4], vn[4];
+			unsigned int v[4] = { 0 }, vt[4] = { 0 }, vn[4] = { 0 };
 			int matches = sscanf_s(line + 2,
 				"%u/%u/%u %u/%u/%u %u/%u/%u %u/%u/%u",
 				&v[0], &vt[0], &vn[0],
 				&v[1], &vt[1], &vn[1],
 				&v[2], &vt[2], &vn[2],
 				&v[3], &vt[3], &vn[3]);
-			if (matches == 12) {
-				model->faces[face_index].v1 = v[0] - 1;
-				model->faces[face_index].vt1 = vt[0] - 1;
-				model->faces[face_index].vn1 = vn[0] - 1;
 
-				model->faces[face_index].v2 = v[1] - 1;
-				model->faces[face_index].vt2 = vt[1] - 1;
-				model->faces[face_index].vn2 = vn[1] - 1;
+			// Handle 3 vertices
+			if (matches == 9) {
+				start_model->faces[face_index].v1 = v[0] - vertex_count - 1;
+				start_model->faces[face_index].vt1 = vt[0] - 1;
+				start_model->faces[face_index].vn1 = vn[0] - normal_count - 1;
 
-				model->faces[face_index].v3 = v[2] - 1;
-				model->faces[face_index].vt3 = vt[2] - 1;
-				model->faces[face_index].vn3 = vn[2] - 1;
+				start_model->faces[face_index].v2 = v[1] - vertex_count - 1;
+				start_model->faces[face_index].vt2 = vt[1] - 1;
+				start_model->faces[face_index].vn2 = vn[1] - normal_count - 1;
 
-				model->faces[face_index].v4 = v[3] - 1;
-				model->faces[face_index].vt4 = vt[3] - 1;
-				model->faces[face_index].vn4 = vn[3] - 1;
+				start_model->faces[face_index].v3 = v[2] - vertex_count - 1;
+				start_model->faces[face_index].vt3 = vt[2] - 1;
+				start_model->faces[face_index].vn3 = vn[2] - normal_count - 1;
 
-				face_index++;
+				// Set 4th vertex to be the same as the 2nd
+				start_model->faces[face_index].v4 = v[1] - vertex_count - 1;
+				start_model->faces[face_index].vt4 = vt[1] - 1;
+				start_model->faces[face_index].vn4 = vn[1] - normal_count - 1;
 			}
+			// Handle 4 vertices
+			else if (matches == 12) {
+				start_model->faces[face_index].v1 = v[0] - vertex_count - 1;
+				start_model->faces[face_index].vt1 = vt[0] - 1;
+				start_model->faces[face_index].vn1 = vn[0] - normal_count - 1;
+
+				start_model->faces[face_index].v2 = v[1] - vertex_count - 1;
+				start_model->faces[face_index].vt2 = vt[1] - 1;
+				start_model->faces[face_index].vn2 = vn[1] - normal_count - 1;
+
+				start_model->faces[face_index].v3 = v[2] - vertex_count - 1;
+				start_model->faces[face_index].vt3 = vt[2] - 1;
+				start_model->faces[face_index].vn3 = vn[2] - normal_count - 1;
+
+				start_model->faces[face_index].v4 = v[3] - vertex_count - 1;
+				start_model->faces[face_index].vt4 = vt[3] - 1;
+				start_model->faces[face_index].vn4 = vn[3] - normal_count - 1;
+			}
+			else {
+				std::cerr << "Unsupported face format: " << line << std::endl;
+				continue;
+			}
+
+			face_index++;
 		}
 		else if (strncmp(line, "usemtl", 6) == 0) {
 			sscanf_s(line + 7, "%255s", current_material, (unsigned)_countof(current_material));
@@ -238,13 +333,24 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 			if (materials && material_count > 0) {
 				for (size_t i = 0; i < material_count; ++i) {
 					if (strcmp(materials[i].name, current_material) == 0) {
-						model->material = materials[i];
+						start_model->material = materials[i];
 						break;
 					}
 				}
 			}
 		}
 	}
+	std::cout << "		[ 현재 모델에 데이터 삽입 종료 ]" << std::endl;
+
+	start_model = *model;
+	while (start_model != NULL) {
+		std::cout << "		[ 현재 모델에 노멀값과 정점 값 일치화 시작 ]" << std::endl;
+		match_normal_and_vertex(&start_model);
+		start_model = start_model->next;
+		std::cout << "		[ 현재 모델에 노멀값과 정점 값 일치화 종료 ]" << std::endl;
+	}
+
+	std::cout << "	[ 데이터 읽기 종료 ]" << std::endl;
 
 	fclose(file);
 
@@ -252,4 +358,6 @@ void read_obj_file_with_mtl(const char* filename, Model* model) {
 	if (materials) {
 		free(materials);
 	}
+
+	std::cout << "=====[Read Obj File End]================================================================================================" << std::endl;
 }

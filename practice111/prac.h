@@ -143,7 +143,7 @@ void match_normal_and_vertex(Model** model) {
 	free(normal_list);
 }
 
-void prac_read_obj_file_with_mtl(const char* filename, Model** model) {
+void read_obj_file_with_mtl(const char* filename, Model** model) {
 	std::cout << "=====[Read Obj File Start]==============================================================================================" << std::endl;\
 	FILE* file;
 

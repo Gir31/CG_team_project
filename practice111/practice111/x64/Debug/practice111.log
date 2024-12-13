@@ -1,56 +1,55 @@
 ﻿  demo.cpp
-D:\github_my\CG_team_project\practice111\prac.h(287,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(287,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(289,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(289,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(291,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(291,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(293,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(293,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(295,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(295,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(297,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(297,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(300,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(300,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(302,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(302,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(306,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(306,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(308,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(308,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(310,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(310,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(312,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(312,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(314,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(314,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(316,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(316,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(318,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(318,61): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\prac.h(320,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\obj_reader.h(320,63): warning C4267: '=': 'size_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   (소스 파일 'demo.cpp'을(를) 컴파일하는 중)
   
-D:\github_my\CG_team_project\practice111\demo.cpp(81,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\github_my\CG_team_project\practice111\demo.cpp(81,21): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\github_my\CG_team_project\practice111\demo.cpp(125,32): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\github_my\CG_team_project\practice111\demo.cpp(137,24): warning C4244: '=': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\github_my\CG_team_project\practice111\demo.cpp(311,63): warning C4390: ';': 제어된 빈 문이 있습니다. 이 문이 필요합니까?
-D:\github_my\CG_team_project\practice111\demo.cpp(394,53): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\demo.cpp(83,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\demo.cpp(83,21): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\demo.cpp(140,24): warning C4244: '=': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\demo.cpp(277,32): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\demo.cpp(349,53): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   practice111.vcxproj -> D:\github_my\CG_team_project\practice111\x64\Debug\practice111.exe

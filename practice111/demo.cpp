@@ -1,6 +1,6 @@
 ﻿#include "GL_My_header.h"
-//#include "obj_reader.h"
-#include "prac.h"
+#include "obj_reader.h"
+//#include "prac.h"
 //========================================================
 #define PI 3.141592f
 #define MAX_LANE 7
@@ -17,7 +17,7 @@ typedef struct obstacle {
 OBSTACLE* start = NULL;
 //========================================================
 // 원근 투영
-PROJECTION projection = { 45.0f, 0.0f, 0.1f, 100.0f };
+PROJECTION projection = { 45.0f, 0.0f, 0.1f, 500.0f };
 glm::vec3 spaceTrans = glm::vec3(0.0f, 0.0f, -2.0f);
 //========================================================
 char vertex[] = { "vertex.glsl" };
@@ -26,29 +26,28 @@ unsigned int VBO[2], VAO, EBO;
 GLuint shaderProgramID;
 //========================================================
 // 사용자 지정 변수
+// 모델 변수
 Model* main_car = NULL;
+Model* background = NULL;
 size_t index_count = 0;
 
+// 카메라 변수
 glm::vec3 transCamera = glm::vec3(0.0f, 20.0f, 50.0f);
 glm::vec3 rotateCamera = glm::vec3(0, 0, 0);
 
-glm::vec3 rotateCube = glm::vec3(0, 0, 0);
-glm::vec3 transCube = glm::vec3(0, 0, 15.f);
+// 메인 자동차 변수
+glm::vec3 rotate_car = glm::vec3(0, 0, 0);
+glm::vec3 trans_car = glm::vec3(0, 0, 10.f);
 
-GLfloat rotateValue = 1.f;
-GLfloat transValue = 0.02f;
-
-GLint moveCount = 0;
-GLint lane = 4;
-GLint targetLane = 4;
 GLint speed_value = 200;
 GLint acceleration = -2;
 
-clock_t start_time;
+// 배경 변수
+glm::vec3 trans_background[2] = { glm::vec3(0, -10.f, -200.f), glm::vec3(0, -10.f, -700.f) };
 
-GLboolean mFlag = FALSE;
+unsigned int transformLocation;
+
 GLboolean left_button = FALSE;
-GLboolean timeSwitch = FALSE;
 GLboolean speed_flag = FALSE;
 //========================================================
 GLvoid drawScene();
@@ -62,9 +61,12 @@ void make_shaderProgram();
 GLvoid initBuffer(const Model* model);
 //========================================================
 // 사용자 지정 함수
+GLvoid draw_model(Model* model);
+
 GLvoid cameraTranslation(glm::vec3 cameraTrans, glm::vec3 cameraRotate);
 GLvoid speed_camera_move();
-GLvoid moveCube(GLint count);
+
+GLvoid move_background();
 
 GLvoid createObstacle();
 GLvoid drawObstacle(); 
@@ -85,7 +87,8 @@ int main(int argc, char** argv)
 	glewInit();
 
 	make_shaderProgram();
-	prac_read_obj_file_with_mtl("back_2.obj", &main_car);
+	read_obj_file_with_mtl("car_s.obj", &main_car);
+	read_obj_file_with_mtl("back_2.obj", &background);
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -109,24 +112,24 @@ GLvoid drawScene()
 	Perspective_Projection_Transformation(projection, spaceTrans, shaderProgramID);
 	cameraTranslation(transCamera, rotateCamera);
 
-	unsigned int transformLocation = glGetUniformLocation(shaderProgramID, "model");
-
 	glUseProgram(shaderProgramID);
+
+	if (transformLocation == NULL) transformLocation = glGetUniformLocation(shaderProgramID, "model");
 	
-	Model* curr_model = main_car;
-	while (curr_model != NULL) {
-		initBuffer(curr_model);
+	glm::mat4 main_car_model = glm::mat4(1.f);
+	main_car_model = translation_shape(trans_car) * rotate_shape(rotate_car);
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(main_car_model));
+	draw_model(main_car);
 
-		glm::mat4 moveCube = glm::mat4(1.f);
-		moveCube = translation_shape(transCube) * rotate_shape(rotateCube);
-		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(moveCube));
+	glm::mat4 background_model = glm::mat4(1.f);
+	background_model = translation_shape(trans_background[0]) * rotate_shape(glm::vec3(0, 90, 0));
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(background_model));
+	draw_model(background);
 
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-
-		curr_model = curr_model->next;
-	}
+	glm::mat4 background_model2 = glm::mat4(1.f);
+	background_model2 = translation_shape(trans_background[1]) * rotate_shape(glm::vec3(0, 90, 0));
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(background_model2));
+	draw_model(background);
 
 
 	glutSwapBuffers();
@@ -184,29 +187,13 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 GLvoid SpecialKeyboard(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_LEFT:
-		// target이 맨 왼쪽을 가르키지 않을 경우 
-		if (targetLane != 1) {
-			moveCount -= 1;
-			mFlag = TRUE;
-			targetLane -= 1;
 
-			if(moveCount == 0) rotateValue = 1.f;
-		}
-		
 		break;
 	case GLUT_KEY_RIGHT:
-		// target이 맨 오른쪽을 가르키지 않을 경우 
-		if (targetLane != MAX_LANE) {
-			moveCount += 1;
-			mFlag = TRUE;
-			targetLane += 1;
 
-			if (moveCount == 0) rotateValue = -1.f;
-		}
-		
 		break;
 	case GLUT_KEY_UP:
-		speed_value += 4;
+		speed_flag = TRUE;
 		break;
 	case GLUT_KEY_DOWN:
 		speed_value -= 4;
@@ -218,25 +205,8 @@ GLvoid SpecialKeyboard(int key, int x, int y) {
 GLvoid TimerFunction(int value) {
 	glutPostRedisplay();
 
-	/*if (!timeSwitch) {
-		start_time = clock();
-		timeSwitch = TRUE;
-	}
-
-	if(moveCount) moveCube(moveCount);
-	moveObstacle();
-
-	// 2초마다 장애물 생성
-	if (clock() - start_time > 2000) { 
-		start_time = clock();
-		timeSwitch = FALSE;
-
-		createObstacle();
-	}*/
-
-	//rotateCube.y += 1;
-
 	speed_camera_move(); 
+	move_background();
 
 	glutTimerFunc(10, TimerFunction, 1);
 }
@@ -297,65 +267,50 @@ GLvoid initBuffer(const Model* model) {
 	glUniform3f(material_specular, model->material.Ks[0], model->material.Ks[1], model->material.Ks[2]);
 } 
 
+GLvoid draw_model(Model* model) {
+	Model* curr_model = model;
+
+	while (curr_model != NULL) {
+		initBuffer(curr_model);
+
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
+		curr_model = curr_model->next;
+	}
+}
+
 GLvoid cameraTranslation(glm::vec3 cameraTrans, glm::vec3 cameraRotate) {
-	glm::vec3 zeroPoint = glm::vec3(0, 0, 0);
 	glm::mat4 view = glm::mat4(1.0f);
-	view = camera_locate(cameraTrans, zeroPoint) * rotate_camera(cameraRotate);
+	view = camera_locate(cameraTrans, glm::vec3(0, 0, 0)) * rotate_camera(cameraRotate);
 
 	unsigned int viewLocation = glGetUniformLocation(shaderProgramID, "view");
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
 }
 
 GLvoid speed_camera_move() {
+	acceleration = -1;
 
-	if (transCamera.z >= MAX_SPEED || transCamera.z <= MIN_SPEED);
+	if (speed_value >= MAX_SPEED || speed_value <= MIN_SPEED) acceleration = 0; // 속도가 최저 혹은 최소에 도달할 때 가속 값을 0으로 변경
+
+	if (speed_flag && speed_value < MAX_SPEED - 8) {
+		acceleration = 8;
+		speed_flag = FALSE;
+	}
+	
+	speed_value += acceleration;
 
 	transCamera.z = ((GLfloat)speed_value / 4); 
 }
 
-GLvoid moveCube(GLint count) {
-	static GLboolean rFlag = FALSE;
+GLvoid move_background() {
+	for (int i = 0; i < 2; i++) {
+		trans_background[i].z += speed_value / 100.f;
 
-	// 카운트가 0 미만이면 왼쪽 이동, 아니면 오른쪽 이동
-	if (count < 0) {
-		rotateCube.y += rotateValue;
-		transCube.x -= transValue;
-
-		if (rotateCube.y <= -30.f || rotateCube.y >= 30.f) {
-			rotateValue *= -1.f;
-			rFlag = TRUE;
-		}
-
-		if (rFlag && rotateCube.y == 0.f) {
-			rFlag = FALSE;
-			moveCount += 1;
-			lane -= 1;
-
-			if (mFlag) rotateValue *= -1;
-		}
+		if (trans_background[i].z >= 300)trans_background[i].z = -700.f;
 	}
-	else {
-		rotateCube.y += rotateValue;
-		transCube.x += transValue;
-
-		if (rotateCube.y <= -30.f || rotateCube.y >= 30.f) {
-			rotateValue *= -1.f;
-			rFlag = TRUE;
-		}
-
-		if (rFlag && rotateCube.y == 0.f) {
-			rFlag = FALSE;
-			moveCount -= 1;
-			lane += 1;
-
-			if (mFlag) rotateValue *= -1;
-		}
-	}
-
-	// 목표했던 레인에 도달시 movecount를 0으로 초기화
-	if (lane == targetLane) moveCount = 0;
 }
-
 
 // 장애물 생성 코드
 GLvoid createObstacle() {
