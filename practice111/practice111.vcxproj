@@ -136,9 +136,11 @@
     <ClInclude Include="prac.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="back_2.mtl" />
     <None Include="car_s.mtl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
+    <None Include="collswork_road_tunnel.mtl" />
     <None Include="fragment.glsl" />
     <None Include="SuperSport_Car.mtl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -147,6 +149,9 @@
   </ItemGroup>
   <ItemGroup>
     <Object Include="back.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="back_2.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </Object>
     <Object Include="car_s.obj">

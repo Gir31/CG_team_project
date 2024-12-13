@@ -43,6 +43,12 @@
     <None Include="car_s.mtl">
       <Filter>리소스 파일</Filter>
     </None>
+    <None Include="collswork_road_tunnel.mtl">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="back_2.mtl">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="cube.obj">
@@ -61,6 +67,9 @@
       <Filter>리소스 파일</Filter>
     </Object>
     <Object Include="back.obj">
+      <Filter>리소스 파일</Filter>
+    </Object>
+    <Object Include="back_2.obj">
       <Filter>리소스 파일</Filter>
     </Object>
   </ItemGroup>

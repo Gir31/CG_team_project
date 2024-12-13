@@ -4,6 +4,8 @@
 //========================================================
 #define PI 3.141592f
 #define MAX_LANE 7
+#define MAX_SPEED 300 // 최고 속도
+#define MIN_SPEED 150 // 최저 속도
 
 typedef struct obstacle {
 
@@ -15,7 +17,7 @@ typedef struct obstacle {
 OBSTACLE* start = NULL;
 //========================================================
 // 원근 투영
-PROJECTION projection = { 45.0f, 0.0f, 0.1f, 50.0f };
+PROJECTION projection = { 45.0f, 0.0f, 0.1f, 100.0f };
 glm::vec3 spaceTrans = glm::vec3(0.0f, 0.0f, -2.0f);
 //========================================================
 char vertex[] = { "vertex.glsl" };
@@ -24,14 +26,14 @@ unsigned int VBO[2], VAO, EBO;
 GLuint shaderProgramID;
 //========================================================
 // 사용자 지정 변수
-Model* cube = NULL;
+Model* main_car = NULL;
 size_t index_count = 0;
 
-glm::vec3 transCamera = glm::vec3(0.0f, 10.0f, 30.0f);
+glm::vec3 transCamera = glm::vec3(0.0f, 20.0f, 50.0f);
 glm::vec3 rotateCamera = glm::vec3(0, 0, 0);
 
 glm::vec3 rotateCube = glm::vec3(0, 0, 0);
-glm::vec3 transCube = glm::vec3(0, 0, 5.f);
+glm::vec3 transCube = glm::vec3(0, 0, 15.f);
 
 GLfloat rotateValue = 1.f;
 GLfloat transValue = 0.02f;
@@ -39,12 +41,15 @@ GLfloat transValue = 0.02f;
 GLint moveCount = 0;
 GLint lane = 4;
 GLint targetLane = 4;
+GLint speed_value = 200;
+GLint acceleration = -2;
 
 clock_t start_time;
 
 GLboolean mFlag = FALSE;
 GLboolean left_button = FALSE;
 GLboolean timeSwitch = FALSE;
+GLboolean speed_flag = FALSE;
 //========================================================
 GLvoid drawScene();
 GLvoid Reshape(int w, int h);
@@ -58,6 +63,7 @@ GLvoid initBuffer(const Model* model);
 //========================================================
 // 사용자 지정 함수
 GLvoid cameraTranslation(glm::vec3 cameraTrans, glm::vec3 cameraRotate);
+GLvoid speed_camera_move();
 GLvoid moveCube(GLint count);
 
 GLvoid createObstacle();
@@ -79,7 +85,7 @@ int main(int argc, char** argv)
 	glewInit();
 
 	make_shaderProgram();
-	prac_read_obj_file_with_mtl("SuperSport_Car.obj", &cube);
+	prac_read_obj_file_with_mtl("back_2.obj", &main_car);
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -107,7 +113,7 @@ GLvoid drawScene()
 
 	glUseProgram(shaderProgramID);
 	
-	Model* curr_model = cube;
+	Model* curr_model = main_car;
 	while (curr_model != NULL) {
 		initBuffer(curr_model);
 
@@ -200,11 +206,10 @@ GLvoid SpecialKeyboard(int key, int x, int y) {
 		
 		break;
 	case GLUT_KEY_UP:
-		transCamera.z += 0.1f;
+		speed_value += 4;
 		break;
 	case GLUT_KEY_DOWN:
-		transCamera.z -= 0.1f;
-		std::cout << transCamera.z << std::endl;
+		speed_value -= 4;
 		break;
 	}
 	glutPostRedisplay();
@@ -213,7 +218,7 @@ GLvoid SpecialKeyboard(int key, int x, int y) {
 GLvoid TimerFunction(int value) {
 	glutPostRedisplay();
 
-	if (!timeSwitch) {
+	/*if (!timeSwitch) {
 		start_time = clock();
 		timeSwitch = TRUE;
 	}
@@ -227,7 +232,11 @@ GLvoid TimerFunction(int value) {
 		timeSwitch = FALSE;
 
 		createObstacle();
-	}
+	}*/
+
+	//rotateCube.y += 1;
+
+	speed_camera_move(); 
 
 	glutTimerFunc(10, TimerFunction, 1);
 }
@@ -274,19 +283,17 @@ GLvoid initBuffer(const Model* model) {
 
 	glUseProgram(shaderProgramID);
 	unsigned int lightPosLocation = glGetUniformLocation(shaderProgramID, "lightPos"); //--- lightPos 값 전달: (0.0, 0.0, 5.0);
-	glUniform3f(lightPosLocation, 0.0, 3.0, 0.0);
+	glUniform3f(lightPosLocation, 0.0, 5.0, 7.0);
 	unsigned int lightColorLocation = glGetUniformLocation(shaderProgramID, "lightColor"); //--- lightColor 값 전달: (1.0, 1.0, 1.0) 백색
 	glUniform3f(lightColorLocation, 1.0, 1.0, 1.0);
-	unsigned int objColorLocation = glGetUniformLocation(shaderProgramID, "modelColor"); //--- model Color값 전달: (1.0, 0.5, 0.3)의 색
-	glUniform3f(objColorLocation, 0.0, 0.5, 0.3);
 	unsigned int viewPosLocation = glGetUniformLocation(shaderProgramID, "viewPos"); //--- viewPos 값 전달: 카메라 위치
 	glUniform3f(viewPosLocation, transCamera.x, transCamera.y, transCamera.z);
 
-	unsigned int material_ambient = glGetUniformLocation(shaderProgramID, "Ka"); //--- lightPos 값 전달: (0.0, 0.0, 5.0);
+	unsigned int material_ambient = glGetUniformLocation(shaderProgramID, "Ka"); //--- model의 ambient 값 전달
 	glUniform3f(material_ambient, model->material.Ka[0], model->material.Ka[1], model->material.Ka[2]);
-	unsigned int material_diffuse = glGetUniformLocation(shaderProgramID, "Kd"); //--- lightColor 값 전달: (1.0, 1.0, 1.0) 백색
+	unsigned int material_diffuse = glGetUniformLocation(shaderProgramID, "Kd"); //--- model의 diffuse 값 전달
 	glUniform3f(material_diffuse, model->material.Kd[0], model->material.Kd[1], model->material.Kd[2]);
-	unsigned int material_specular = glGetUniformLocation(shaderProgramID, "Ks"); //--- model Color값 전달: (1.0, 0.5, 0.3)의 색
+	unsigned int material_specular = glGetUniformLocation(shaderProgramID, "Ks"); //--- model의 specular 값 전달
 	glUniform3f(material_specular, model->material.Ks[0], model->material.Ks[1], model->material.Ks[2]);
 } 
 
@@ -297,6 +304,13 @@ GLvoid cameraTranslation(glm::vec3 cameraTrans, glm::vec3 cameraRotate) {
 
 	unsigned int viewLocation = glGetUniformLocation(shaderProgramID, "view");
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
+}
+
+GLvoid speed_camera_move() {
+
+	if (transCamera.z >= MAX_SPEED || transCamera.z <= MIN_SPEED);
+
+	transCamera.z = ((GLfloat)speed_value / 4); 
 }
 
 GLvoid moveCube(GLint count) {
@@ -377,7 +391,7 @@ GLvoid drawObstacle() {
 		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(obstacle));
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, cube->face_count * 3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, main_car->face_count * 3, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
 		curr = curr->next;
