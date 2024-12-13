@@ -45,6 +45,8 @@ typedef struct Model {
 	size_t normal_count;        // Number of normals
 	size_t face_count;          // Number of faces
 
+	float* vertex_normal_list; // 버텍스 값과 노멀 값을 하나로 뭉쳐주는 리스트
+
 	struct Model* next;
 } Model;
 
@@ -112,35 +114,45 @@ void read_mtl_file(const char* filename, Material** materials, size_t* material_
 	std::cout << "=====[Read MTL File End]================================================================================================" << std::endl;
 }
 
-void match_normal_and_vertex(Model** model) {
-	Model* new_model = *model;
+void create_list(Model** model) {
+	int count = (*model)->face_count * 24;
 
-	Normal* normal_list = (Normal*)malloc(new_model->normal_count * sizeof(Normal));
+	(*model)->vertex_normal_list = (float*)malloc(count * sizeof(float)); // face 카운트 수 * 정점 4개 * 좌표 * (정점 + 노멀)
 
-	for (int i = 0; i < new_model->normal_count; i++) {
-		normal_list[i].x = new_model->normals[i].x;
-		normal_list[i].y = new_model->normals[i].y;
-		normal_list[i].z = new_model->normals[i].z;
+	for (int i = 0; i < (*model)->face_count; i++) {
+		(*model)->vertex_normal_list[(24 * i)] = (*model)->vertices[(*model)->faces[i].v1].x;
+		(*model)->vertex_normal_list[(24 * i) + 1] = (*model)->vertices[(*model)->faces[i].v1].y;
+		(*model)->vertex_normal_list[(24 * i) + 2] = (*model)->vertices[(*model)->faces[i].v1].z;
+		(*model)->vertex_normal_list[(24 * i) + 3] = (*model)->normals[(*model)->faces[i].vn1].x;
+		(*model)->vertex_normal_list[(24 * i) + 4] = (*model)->normals[(*model)->faces[i].vn1].y;
+		(*model)->vertex_normal_list[(24 * i) + 5] = (*model)->normals[(*model)->faces[i].vn1].z;
+
+		(*model)->vertex_normal_list[(24 * i) + 6] = (*model)->vertices[(*model)->faces[i].v2].x;
+		(*model)->vertex_normal_list[(24 * i) + 7] = (*model)->vertices[(*model)->faces[i].v2].y;
+		(*model)->vertex_normal_list[(24 * i) + 8] = (*model)->vertices[(*model)->faces[i].v2].z;
+		(*model)->vertex_normal_list[(24 * i) + 9] = (*model)->normals[(*model)->faces[i].vn2].x;
+		(*model)->vertex_normal_list[(24 * i) + 10] = (*model)->normals[(*model)->faces[i].vn2].y;
+		(*model)->vertex_normal_list[(24 * i) + 11] = (*model)->normals[(*model)->faces[i].vn2].z;
+
+		(*model)->vertex_normal_list[(24 * i) + 12] = (*model)->vertices[(*model)->faces[i].v3].x;
+		(*model)->vertex_normal_list[(24 * i) + 13] = (*model)->vertices[(*model)->faces[i].v3].y;
+		(*model)->vertex_normal_list[(24 * i) + 14] = (*model)->vertices[(*model)->faces[i].v3].z;
+		(*model)->vertex_normal_list[(24 * i) + 15] = (*model)->normals[(*model)->faces[i].vn3].x;
+		(*model)->vertex_normal_list[(24 * i) + 16] = (*model)->normals[(*model)->faces[i].vn3].y;
+		(*model)->vertex_normal_list[(24 * i) + 17] = (*model)->normals[(*model)->faces[i].vn3].z;
+
+		(*model)->vertex_normal_list[(24 * i) + 18] = (*model)->vertices[(*model)->faces[i].v4].x;
+		(*model)->vertex_normal_list[(24 * i) + 19] = (*model)->vertices[(*model)->faces[i].v4].y;
+		(*model)->vertex_normal_list[(24 * i) + 20] = (*model)->vertices[(*model)->faces[i].v4].z;
+		(*model)->vertex_normal_list[(24 * i) + 21] = (*model)->normals[(*model)->faces[i].vn4].x;
+		(*model)->vertex_normal_list[(24 * i) + 22] = (*model)->normals[(*model)->faces[i].vn4].y;
+		(*model)->vertex_normal_list[(24 * i) + 23] = (*model)->normals[(*model)->faces[i].vn4].z;
 	}
-	for (int i = 0; i < new_model->face_count; i++) {
-		new_model->normals[new_model->faces[i].v1].x = normal_list[new_model->faces[i].vn1].x;
-		new_model->normals[new_model->faces[i].v1].y = normal_list[new_model->faces[i].vn1].y;
-		new_model->normals[new_model->faces[i].v1].z = normal_list[new_model->faces[i].vn1].z;
 
-		new_model->normals[new_model->faces[i].v2].x = normal_list[new_model->faces[i].vn2].x;
-		new_model->normals[new_model->faces[i].v2].y = normal_list[new_model->faces[i].vn2].y;
-		new_model->normals[new_model->faces[i].v2].z = normal_list[new_model->faces[i].vn2].z;
-
-		new_model->normals[new_model->faces[i].v3].x = normal_list[new_model->faces[i].vn3].x;
-		new_model->normals[new_model->faces[i].v3].y = normal_list[new_model->faces[i].vn3].y;
-		new_model->normals[new_model->faces[i].v3].z = normal_list[new_model->faces[i].vn3].z;
-
-		new_model->normals[new_model->faces[i].v4].x = normal_list[new_model->faces[i].vn4].x;
-		new_model->normals[new_model->faces[i].v4].y = normal_list[new_model->faces[i].vn4].y;
-		new_model->normals[new_model->faces[i].v4].z = normal_list[new_model->faces[i].vn4].z;
-	}
-
-	free(normal_list);
+	free((*model)->vertices);
+	free((*model)->normals);
+	free((*model)->texture_coords);
+	free((*model)->faces);
 }
 
 void read_obj_file_with_mtl(const char* filename, Model** model) {
@@ -345,7 +357,7 @@ void read_obj_file_with_mtl(const char* filename, Model** model) {
 	start_model = *model;
 	while (start_model != NULL) {
 		std::cout << "		[ 현재 모델에 노멀값과 정점 값 일치화 시작 ]" << std::endl;
-		match_normal_and_vertex(&start_model);
+		create_list(&start_model);
 		start_model = start_model->next;
 		std::cout << "		[ 현재 모델에 노멀값과 정점 값 일치화 종료 ]" << std::endl;
 	}

@@ -16,7 +16,7 @@ uniform vec3 Ks;
 void main ()
 {
 	// Ambient lighting
-	float ambientLight = 0.3; //--- 주변 조명 세기
+	float ambientLight = 0.2; //--- 주변 조명 세기
 	vec3 ambient = ambientLight * lightColor; //--- 주변 조명 값
 
 	// Diffuse lighting

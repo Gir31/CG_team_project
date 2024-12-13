@@ -43,20 +43,11 @@
     <None Include="car_s.mtl">
       <Filter>리소스 파일</Filter>
     </None>
-    <None Include="collswork_road_tunnel.mtl">
-      <Filter>리소스 파일</Filter>
-    </None>
-    <None Include="back_2.mtl">
+    <None Include="back_color.mtl">
       <Filter>리소스 파일</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="cube.obj">
-      <Filter>리소스 파일</Filter>
-    </Object>
-    <Object Include="collswork_road_tunnel.obj">
-      <Filter>리소스 파일</Filter>
-    </Object>
     <Object Include="SuperSport_Car.obj">
       <Filter>리소스 파일</Filter>
     </Object>
@@ -66,10 +57,10 @@
     <Object Include="car_s.obj">
       <Filter>리소스 파일</Filter>
     </Object>
-    <Object Include="back.obj">
+    <Object Include="back_color.obj">
       <Filter>리소스 파일</Filter>
     </Object>
-    <Object Include="back_2.obj">
+    <Object Include="cube.obj">
       <Filter>리소스 파일</Filter>
     </Object>
   </ItemGroup>

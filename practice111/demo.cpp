@@ -22,7 +22,7 @@ glm::vec3 spaceTrans = glm::vec3(0.0f, 0.0f, -2.0f);
 //========================================================
 char vertex[] = { "vertex.glsl" };
 char fragment[] = { "fragment.glsl" };
-unsigned int VBO[2], VAO, EBO;
+// unsigned int VBO[2], VAO, EBO;
 GLuint shaderProgramID;
 //========================================================
 // 사용자 지정 변수
@@ -88,7 +88,7 @@ int main(int argc, char** argv)
 
 	make_shaderProgram();
 	read_obj_file_with_mtl("car_s.obj", &main_car);
-	read_obj_file_with_mtl("back_2.obj", &background);
+	read_obj_file_with_mtl("back_color.obj", &background);
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -212,48 +212,23 @@ GLvoid TimerFunction(int value) {
 }
 
 GLvoid initBuffer(const Model* model) {
-	unsigned int* indices = (unsigned int*)malloc(model->face_count * 6 * sizeof(unsigned int)); // 6 = 2 삼각형 * 3 인덱스
-	index_count = 0;
-
-	for (size_t i = 0; i < model->face_count; i++) {
-		// 쿼드 Face를 삼각형 두 개로 분리
-		indices[index_count++] = model->faces[i].v1;
-		indices[index_count++] = model->faces[i].v2;
-		indices[index_count++] = model->faces[i].v3;
-
-		indices[index_count++] = model->faces[i].v1;
-		indices[index_count++] = model->faces[i].v3;
-		indices[index_count++] = model->faces[i].v4;
-	}
+	unsigned int VBO, VAO; 
 
 	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
 	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, model->face_count * 24 * sizeof(float), model->vertex_normal_list, GL_STATIC_DRAW);
 
-	// Vertex 데이터 바인딩
-	glGenBuffers(1, &VBO[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-	glBufferData(GL_ARRAY_BUFFER, model->vertex_count * sizeof(Vertex), model->vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //--- 위치 속성
 	glEnableVertexAttribArray(0);
-
-	// Normal 데이터 바인딩
-	glGenBuffers(1, &VBO[1]);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-	glBufferData(GL_ARRAY_BUFFER, model->normal_count * sizeof(Normal), model->normals, GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Normal), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); //--- 노말 속성
 	glEnableVertexAttribArray(1);
-
-	// Index 데이터 바인딩
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_count * sizeof(unsigned int), indices, GL_STATIC_DRAW);
-
-	// 정리
-	glBindVertexArray(0);
 
 	glUseProgram(shaderProgramID);
 	unsigned int lightPosLocation = glGetUniformLocation(shaderProgramID, "lightPos"); //--- lightPos 값 전달: (0.0, 0.0, 5.0);
-	glUniform3f(lightPosLocation, 0.0, 5.0, 7.0);
+	glUniform3f(lightPosLocation, 0.0, 100.0, 0.0);
 	unsigned int lightColorLocation = glGetUniformLocation(shaderProgramID, "lightColor"); //--- lightColor 값 전달: (1.0, 1.0, 1.0) 백색
 	glUniform3f(lightColorLocation, 1.0, 1.0, 1.0);
 	unsigned int viewPosLocation = glGetUniformLocation(shaderProgramID, "viewPos"); //--- viewPos 값 전달: 카메라 위치
@@ -265,6 +240,7 @@ GLvoid initBuffer(const Model* model) {
 	glUniform3f(material_diffuse, model->material.Kd[0], model->material.Kd[1], model->material.Kd[2]);
 	unsigned int material_specular = glGetUniformLocation(shaderProgramID, "Ks"); //--- model의 specular 값 전달
 	glUniform3f(material_specular, model->material.Ks[0], model->material.Ks[1], model->material.Ks[2]);
+
 } 
 
 GLvoid draw_model(Model* model) {
@@ -273,9 +249,7 @@ GLvoid draw_model(Model* model) {
 	while (curr_model != NULL) {
 		initBuffer(curr_model);
 
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+		glDrawArrays(GL_QUADS, 0, curr_model->face_count * 24);
 
 		curr_model = curr_model->next;
 	}
@@ -344,10 +318,6 @@ GLvoid drawObstacle() {
 		glm::mat4 obstacle = glm::mat4(1.f);
 		obstacle = translation_shape(curr->move);
 		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(obstacle));
-
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, main_car->face_count * 3, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
 
 		curr = curr->next;
 	}
