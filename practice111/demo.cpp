@@ -22,7 +22,7 @@ glm::vec3 spaceTrans = glm::vec3(0.0f, 0.0f, -2.0f);
 //========================================================
 char vertex[] = { "vertex.glsl" };
 char fragment[] = { "fragment.glsl" };
-// unsigned int VBO[2], VAO, EBO;
+unsigned int VBO, VAO;
 GLuint shaderProgramID;
 //========================================================
 // 사용자 지정 변수
@@ -212,8 +212,6 @@ GLvoid TimerFunction(int value) {
 }
 
 GLvoid initBuffer(const Model* model) {
-	unsigned int VBO, VAO; 
-
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 
@@ -240,7 +238,6 @@ GLvoid initBuffer(const Model* model) {
 	glUniform3f(material_diffuse, model->material.Kd[0], model->material.Kd[1], model->material.Kd[2]);
 	unsigned int material_specular = glGetUniformLocation(shaderProgramID, "Ks"); //--- model의 specular 값 전달
 	glUniform3f(material_specular, model->material.Ks[0], model->material.Ks[1], model->material.Ks[2]);
-
 } 
 
 GLvoid draw_model(Model* model) {
@@ -250,6 +247,9 @@ GLvoid draw_model(Model* model) {
 		initBuffer(curr_model);
 
 		glDrawArrays(GL_QUADS, 0, curr_model->face_count * 24);
+
+		glDeleteVertexArrays(1, &VAO);
+		glDeleteBuffers(1, &VBO);
 
 		curr_model = curr_model->next;
 	}
