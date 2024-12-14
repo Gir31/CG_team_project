@@ -37,23 +37,17 @@
     <None Include="vertex.glsl">
       <Filter>리소스 파일</Filter>
     </None>
-    <None Include="SuperSport_Car.mtl">
-      <Filter>리소스 파일</Filter>
-    </None>
     <None Include="car_s.mtl">
       <Filter>리소스 파일</Filter>
     </None>
     <None Include="back_color.mtl">
       <Filter>리소스 파일</Filter>
     </None>
+    <None Include="car_k.mtl">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="SuperSport_Car.obj">
-      <Filter>리소스 파일</Filter>
-    </Object>
-    <Object Include="SuperSport_Car_A.obj">
-      <Filter>리소스 파일</Filter>
-    </Object>
     <Object Include="car_s.obj">
       <Filter>리소스 파일</Filter>
     </Object>
@@ -61,6 +55,9 @@
       <Filter>리소스 파일</Filter>
     </Object>
     <Object Include="cube.obj">
+      <Filter>리소스 파일</Filter>
+    </Object>
+    <Object Include="car_k.obj">
       <Filter>리소스 파일</Filter>
     </Object>
   </ItemGroup>
