@@ -1,10 +1,10 @@
 ﻿#include "GL_My_header.h"
 #include "obj_reader.h"
-//#include "prac.h"
+#include <time.h>
 //========================================================
 #define PI 3.141592f
 #define MAX_LANE 7
-#define MAX_SPEED 500 // 최고 속도
+#define MAX_SPEED 700 // 최고 속도
 #define MIN_SPEED 1 // 최저 속도
 
 typedef struct obstacle {
@@ -59,6 +59,8 @@ GLfloat speed_value = 200, acceleration = -2;
 
 GLboolean is_colliding = FALSE;
 GLboolean have_shield = FALSE;
+
+GLboolean dash = FALSE; clock_t dash_timer = clock(); 
 GLint original_speed = 300; // speed_value의 기본값 저장
 
 GLint curr_lane = 4, target_lane = 4; // 최소 레인 1, 최대 레인 7
@@ -307,6 +309,8 @@ GLvoid TimerFunction(int value) {
 	else move_car();
 
 	if (have_shield) hovering();
+
+	if (dash) {if ((double)(clock() - dash_timer) / CLOCKS_PER_SEC > 5) dash = FALSE;}
 	
 	move_background();
 	moveObstacle();
@@ -373,16 +377,16 @@ GLvoid speed_camera_move() {
 
 	if (speed_value < 250) acceleration = 0.5;
 
-	if (speed_value >= MAX_SPEED) acceleration = 0; // 속도가 최저 혹은 최소에 도달할 때 가속 값을 0으로 변경
-	else if (speed_value < MIN_SPEED) speed_value = 1;
+	if (dash) acceleration = 5;
 
 	speed_value += acceleration;
+
+	if (speed_value >= MAX_SPEED) speed_value = MAX_SPEED; 
+	else if (speed_value < MIN_SPEED) speed_value = 1;
 
 	transCamera.z = ((GLfloat)speed_value / 4);
 	transCamera.y = transCamera.z * 3 / 10;
 	trans_car.z = ((GLfloat)speed_value / 50);
-
-	//printf("	Current Speed : %f km/h\n", speed_value);
 }
 
 GLvoid move_car() {
@@ -664,6 +668,8 @@ GLvoid moveItem() {
 
 			switch (curr->type) {
 			case 0:
+				dash = TRUE;
+				dash_timer = clock();
 				break;
 			case 1:
 				have_shield = TRUE;
