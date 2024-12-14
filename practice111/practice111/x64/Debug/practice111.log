@@ -54,10 +54,10 @@ D:\github_my\CG_team_project\practice111\demo.cpp(122,29): warning C4244: '인�
 D:\github_my\CG_team_project\practice111\demo.cpp(122,21): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 D:\github_my\CG_team_project\practice111\demo.cpp(192,24): warning C4244: '=': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 D:\github_my\CG_team_project\practice111\demo.cpp(354,52): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\github_my\CG_team_project\practice111\demo.cpp(448,33): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\github_my\CG_team_project\practice111\demo.cpp(643,48): warning C4244: '=': 'int'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\github_my\CG_team_project\practice111\demo.cpp(643,48): warning C4244:         with
-D:\github_my\CG_team_project\practice111\demo.cpp(643,48): warning C4244:         [
-D:\github_my\CG_team_project\practice111\demo.cpp(643,48): warning C4244:             T=float
-D:\github_my\CG_team_project\practice111\demo.cpp(643,48): warning C4244:         ]
+D:\github_my\CG_team_project\practice111\demo.cpp(460,33): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\demo.cpp(655,48): warning C4244: '=': 'int'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\github_my\CG_team_project\practice111\demo.cpp(655,48): warning C4244:         with
+D:\github_my\CG_team_project\practice111\demo.cpp(655,48): warning C4244:         [
+D:\github_my\CG_team_project\practice111\demo.cpp(655,48): warning C4244:             T=float
+D:\github_my\CG_team_project\practice111\demo.cpp(655,48): warning C4244:         ]
   practice111.vcxproj -> D:\github_my\CG_team_project\practice111\x64\Debug\practice111.exe

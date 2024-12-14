@@ -390,37 +390,49 @@ GLvoid move_car() {
 		
 		if (lane_coords[target_lane - 1] >= trans_car.x) {
 			rotate_car.y -= 5;
+			rotateCamera.z += 0.5;
 			if (rotate_car.y <= 0) {
 				curr_lane -= 1;
 				rotate_car.y = 0;
+				rotateCamera.z = 0;
 			}
 		}
 		else {
 			trans_car.x -= 0.5f;
 			rotate_car.y += 5;
+			rotateCamera.z -= 0.5;
 		}
 	}
 	else if (curr_lane < target_lane) {	
 		if (lane_coords[target_lane - 1] <= trans_car.x) {
 			rotate_car.y += 5;
+			rotateCamera.z -= 0.5;
 			if (rotate_car.y >= 0) {
 				curr_lane += 1;
 				rotate_car.y = 0;
+				rotateCamera.z = 0;
 			}
 		}
 		else {
 			trans_car.x += 0.5f;
 			rotate_car.y -= 5;
+			rotateCamera.z += 0.5;
 		}
 	}
 }
 
 GLvoid spin_car() {
-	rotate_car.y += 36;
+	static float rc_value = 2;
+
+	rotate_car.y += 18;
+	rotateCamera.x += rc_value;
+
+	if ((int)(rotate_car.y) % 90 == 0) rc_value *= -1;
 
 	if (rotate_car.y / 360 >= 2) {
 		is_colliding = FALSE;
 		rotate_car.y = 0;
+		rotateCamera.x = 0;
 	}
 }
 
