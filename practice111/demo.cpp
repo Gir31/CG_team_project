@@ -5,12 +5,15 @@
 #define PI 3.141592f
 #define MAX_LANE 7
 #define MAX_SPEED 500 // 최고 속도
-#define MIN_SPEED 300 // 최저 속도
+#define MIN_SPEED 1 // 최저 속도
 
 typedef struct obstacle {
 
 	glm::vec3 move;
+	bool lane_change;
+	float target_lane;
 	float speed;
+	int type;
 
 	struct obstacle* next;
 }OBSTACLE;
@@ -29,7 +32,7 @@ GLuint shaderProgramID;
 // 사용자 지정 변수
 // 모델 변수
 Model* main_car = NULL;
-Model* obstacle_car = NULL;
+Model* obstacle_car[3] = { NULL, NULL, NULL };
 Model* background = NULL;
 size_t index_count = 0;
 
@@ -41,17 +44,17 @@ glm::vec3 rotateCamera = glm::vec3(0, 0, 0);
 glm::vec3 rotate_car = glm::vec3(0, 0, 0);
 glm::vec3 trans_car = glm::vec3(0, 0, 5.f);
 
-GLint speed_value = 200;
-GLint acceleration = -2;
+GLfloat speed_value = 200, acceleration = -2;
 
 GLboolean is_colliding = FALSE;
 GLint original_speed = 300; // speed_value의 기본값 저장
 
 GLint curr_lane = 4, target_lane = 4; // 최소 레인 1, 최대 레인 7
+GLfloat lane_coords[7] = { -15.f, -10.f, -5.f, 0.f, 5.f, 10.f, 15.f };
 
 
 // 배경 변수
-glm::vec3 trans_background[2] = { glm::vec3(0, -10.f, -500.f), glm::vec3(0, -10.f, -1400.f) };
+glm::vec3 trans_background[2] = { glm::vec3(0, -5.f, -500.f), glm::vec3(0, -5.f, -1400.f) };
 
 unsigned int transformLocation;
 
@@ -75,6 +78,8 @@ GLvoid cameraTranslation(glm::vec3 cameraTrans, glm::vec3 cameraRotate);
 GLvoid speed_camera_move();
 
 GLvoid move_background();
+GLvoid move_car(); 
+GLvoid spin_car();
 
 GLvoid createObstacle();
 GLvoid drawObstacle();
@@ -96,7 +101,9 @@ int main(int argc, char** argv)
 
 	make_shaderProgram();
 	read_obj_file_with_mtl("car_s.obj", &main_car);
-	read_obj_file_with_mtl("car_k.obj", &obstacle_car);
+	read_obj_file_with_mtl("car_k.obj", &obstacle_car[0]);
+	read_obj_file_with_mtl("car_r.obj", &obstacle_car[1]);
+	read_obj_file_with_mtl("car_t.obj", &obstacle_car[2]);
 	read_obj_file_with_mtl("back_color.obj", &background);
 
 	glutDisplayFunc(drawScene);
@@ -196,15 +203,13 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 GLvoid SpecialKeyboard(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_LEFT:
-		if (curr_lane > 1) { // 레인 제한
-			trans_car.x -= 5.f;
-			curr_lane -= 1;
+		if (curr_lane > 1 && target_lane == curr_lane) { // 레인 제한
+			target_lane -= 1;
 		}
 		break;
 	case GLUT_KEY_RIGHT:
-		if (curr_lane < 7) { // 레인 제한
-			trans_car.x += 5.f;
-			curr_lane += 1;
+		if (curr_lane < 7 && target_lane == curr_lane) { // 레인 제한
+			target_lane += 1;
 		}
 		break;
 	case GLUT_KEY_UP:
@@ -240,6 +245,10 @@ GLvoid TimerFunction(int value) {
 	}
 
 	speed_camera_move();
+	
+	if (is_colliding) spin_car();
+	else move_car();
+	
 	move_background();
 	moveObstacle();
 
@@ -304,17 +313,51 @@ GLvoid cameraTranslation(glm::vec3 cameraTrans, glm::vec3 cameraRotate) {
 GLvoid speed_camera_move() {
 	acceleration = -1;
 
-	if (speed_value >= MAX_SPEED || speed_value <= MIN_SPEED) acceleration = 0; // 속도가 최저 혹은 최소에 도달할 때 가속 값을 0으로 변경
+	if (speed_value < 250) acceleration = 0.5;
 
-	if (speed_flag && speed_value < MAX_SPEED - 8) {
-		acceleration = 8;
-		speed_flag = FALSE;
-	}
+	if (speed_value >= MAX_SPEED) acceleration = 0; // 속도가 최저 혹은 최소에 도달할 때 가속 값을 0으로 변경
+	else if (speed_value < MIN_SPEED) speed_value = 1;
 
 	speed_value += acceleration;
 
 	transCamera.z = ((GLfloat)speed_value / 4);
+	transCamera.y = transCamera.z * 3 / 10;
 	trans_car.z = ((GLfloat)speed_value / 50);
+
+	printf("	Current Speed : %f km/h\n", speed_value);
+}
+
+GLvoid move_car() {
+	if (curr_lane > target_lane) {
+		
+		if (lane_coords[target_lane - 1] >= trans_car.x) {
+			rotate_car.y -= 5;
+			if(rotate_car.y == 0) curr_lane -= 1;
+		}
+		else {
+			trans_car.x -= 0.5f;
+			rotate_car.y += 5;
+		}
+	}
+	else if (curr_lane < target_lane) {	
+		if (lane_coords[target_lane - 1] <= trans_car.x) {
+			rotate_car.y += 5;
+			if (rotate_car.y == 0) curr_lane += 1;
+		}
+		else {
+			trans_car.x += 0.5f;
+			rotate_car.y -= 5;
+		}
+	}
+}
+
+GLvoid spin_car() {
+	rotate_car.y += 5;
+
+	if (rotate_car.y / 360 >= 1) {
+		is_colliding = FALSE;
+		rotate_car.y = 0;
+	}
 }
 
 GLvoid move_background() {
@@ -329,6 +372,7 @@ GLvoid createObstacle() {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> lane_dist(1, MAX_LANE);
+	std::uniform_int_distribution<int> car_type(0, 2);
 	std::uniform_int_distribution<int> speed_dist(50, 150);
 	std::uniform_real_distribution<float> z_dist(-900.0f, -700.0f); // 장애물 생성 범위를 -900 ~ -700으로 확장
 
@@ -338,6 +382,8 @@ GLvoid createObstacle() {
 	newObstacle->move.y = 0.0f;
 	newObstacle->move.z = z_dist(gen); // 카메라 밖에서 생성
 	newObstacle->speed = speed_dist(gen);
+	newObstacle->type = car_type(gen);
+	newObstacle->lane_change = FALSE;
 
 	// 링크드리스트로 추가
 	OBSTACLE* curr = start;
@@ -364,7 +410,7 @@ GLvoid drawObstacle() {
 		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(obstacle_model));
 
 		// 모델(car_k.obj)을 사용하여 그리기
-		draw_model(obstacle_car);
+		draw_model(obstacle_car[curr->type]);
 
 		curr = curr->next;
 	}
@@ -394,7 +440,27 @@ GLboolean checkCollision(glm::vec3 car, glm::vec3 obstacle) {
 }
 
 GLvoid reckless_driving(OBSTACLE* obstacle) {
+	OBSTACLE* curr = start;
 
+	while (curr != NULL) {
+		if (curr != obstacle && checkCollision(obstacle->move, curr->move) && !obstacle->lane_change) {
+			obstacle->lane_change = TRUE;
+
+			if (obstacle->move.x == -15.f)  obstacle->target_lane = -10.f;
+			else if (obstacle->move.x == 15.f) obstacle->target_lane = 10.f;
+			else {
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::uniform_int_distribution<int> random_int(0, 1);
+
+				random_int(gen) ? obstacle->target_lane = obstacle->move.x -= 5.f : obstacle->target_lane = obstacle->move.x += 5.f;
+			}
+
+			break;
+		}
+
+		curr = curr->next;
+	}
 }
 
 GLvoid moveObstacle() {
@@ -403,20 +469,31 @@ GLvoid moveObstacle() {
 	while (curr != NULL) {
 		curr->move.z += speed_value / curr->speed;
 
+		reckless_driving(curr);
+
+		if (curr->lane_change) {
+			if (curr->move.x > curr->target_lane) {
+				curr->move.x -= 0.1f;
+			}
+			else if (curr->move.x < curr->target_lane) {
+				curr->move.x += 0.1f;
+			}
+			else {
+				curr->lane_change = FALSE;
+			}
+		}
+
 		// 충돌 검사
 		if (!is_colliding && checkCollision(trans_car, curr->move)) {
 			printf("Collision detected!\n");
-			//is_colliding = TRUE;
 
-			/*// 속도를 저장하고 배경 멈추기
-			original_speed = speed_value;
-			speed_value = 0;
+			OBSTACLE* target = curr;
+			curr = curr->next;
+			removeObstacle(target);
 
-			// 0.5초 후 속도 복구
-			glutTimerFunc(500, [](int value) {
-				speed_value = original_speed;
-				is_colliding = FALSE;
-				}, 0);*/
+			rotate_car.y = 0;
+			is_colliding = TRUE;
+			speed_value -= 150;
 		}
 
 		// 화면 넘어가는 장애물 제거
