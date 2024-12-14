@@ -37,28 +37,5 @@
     <None Include="vertex.glsl">
       <Filter>리소스 파일</Filter>
     </None>
-    <None Include="car_s.mtl">
-      <Filter>리소스 파일</Filter>
-    </None>
-    <None Include="back_color.mtl">
-      <Filter>리소스 파일</Filter>
-    </None>
-    <None Include="car_k.mtl">
-      <Filter>리소스 파일</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="car_s.obj">
-      <Filter>리소스 파일</Filter>
-    </Object>
-    <Object Include="back_color.obj">
-      <Filter>리소스 파일</Filter>
-    </Object>
-    <Object Include="cube.obj">
-      <Filter>리소스 파일</Filter>
-    </Object>
-    <Object Include="car_k.obj">
-      <Filter>리소스 파일</Filter>
-    </Object>
   </ItemGroup>
 </Project>

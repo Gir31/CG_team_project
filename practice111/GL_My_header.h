@@ -27,7 +27,6 @@ typedef struct {
 GLuint vertexShader;
 GLuint fragmentShader;
 
-
 extern char* filetobuf(const char* file);
 
 extern void make_VertexShaders(char* fileName);

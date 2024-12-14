@@ -7,24 +7,8 @@
       "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:demo.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_my\\CG_team_project\\practice111\\car_k.obj||{58961B49-13E0-48C0-9258-13CBC4D40279}",
-      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:car_k.obj||{58961B49-13E0-48C0-9258-13CBC4D40279}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_my\\CG_team_project\\practice111\\fragment.glsl||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:fragment.glsl||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_my\\CG_team_project\\practice111\\GL_My_header.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:GL_My_header.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_my\\CG_team_project\\practice111\\back_color.obj||{58961B49-13E0-48C0-9258-13CBC4D40279}",
-      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:back_color.obj||{58961B49-13E0-48C0-9258-13CBC4D40279}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_my\\CG_team_project\\practice111\\car_s.obj||{58961B49-13E0-48C0-9258-13CBC4D40279}",
-      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:car_s.obj||{58961B49-13E0-48C0-9258-13CBC4D40279}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_my\\CG_team_project\\practice111\\prac.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -38,33 +22,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 171,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "car_k.obj",
-              "DocumentMoniker": "D:\\github_my\\CG_team_project\\practice111\\car_k.obj",
-              "RelativeDocumentMoniker": "car_k.obj",
-              "ToolTip": "D:\\github_my\\CG_team_project\\practice111\\car_k.obj",
-              "RelativeToolTip": "car_k.obj",
-              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAENSURBVDhPjZPNDYMwDIVDxAlxYJR2hCKOSKzQEZiCaxmGIxIjtJu0B35upH4mrgCRlE8ydtLk2XFStafv\u002B8s4jm8YYjt9jDHGRguyuaoqAzslIqw3p2nKdkYkwAcLtNZdXddJ27b8g5BlmSrL8jPP8y2O45eIIYbXvs17ZC1MhAKU6Npss9vRAq1lL1WFPHIAUU9VCYl0GipQQzYBcdM0bAC\u002BKAqO94S2MRDpaJxgUsqjsz4xBsMw2GjbWDt1/IAo5uuEh63eh5mm6Y41Gh\u002BASqAIkyvaQ1nZo5H0CB9IxO/ABTLleW5HW\u002BQYvwpcSDNdTfQKRFEU0JGuFH7\u002BNtGHNHjVxPN/MuHolpRS6gsdswxexzQFmAAAAABJRU5ErkJggg==",
-              "WhenOpened": "2024-12-14T04:08:39.766Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "car_s.obj",
-              "DocumentMoniker": "D:\\github_my\\CG_team_project\\practice111\\car_s.obj",
-              "RelativeDocumentMoniker": "car_s.obj",
-              "ToolTip": "D:\\github_my\\CG_team_project\\practice111\\car_s.obj",
-              "RelativeToolTip": "car_s.obj",
-              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAENSURBVDhPjZPNDYMwDIVDxAlxYJR2hCKOSKzQEZiCaxmGIxIjtJu0B35upH4mrgCRlE8ydtLk2XFStafv\u002B8s4jm8YYjt9jDHGRguyuaoqAzslIqw3p2nKdkYkwAcLtNZdXddJ27b8g5BlmSrL8jPP8y2O45eIIYbXvs17ZC1MhAKU6Npss9vRAq1lL1WFPHIAUU9VCYl0GipQQzYBcdM0bAC\u002BKAqO94S2MRDpaJxgUsqjsz4xBsMw2GjbWDt1/IAo5uuEh63eh5mm6Y41Gh\u002BASqAIkyvaQ1nZo5H0CB9IxO/ABTLleW5HW\u002BQYvwpcSDNdTfQKRFEU0JGuFH7\u002BNtGHNHjVxPN/MuHolpRS6gsdswxexzQFmAAAAABJRU5ErkJggg==",
-              "WhenOpened": "2024-12-13T10:35:20.109Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
               "Title": "fragment.glsl",
               "DocumentMoniker": "D:\\github_my\\CG_team_project\\practice111\\fragment.glsl",
               "RelativeDocumentMoniker": "fragment.glsl",
@@ -76,18 +38,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "back_color.obj",
-              "DocumentMoniker": "D:\\github_my\\CG_team_project\\practice111\\back_color.obj",
-              "RelativeDocumentMoniker": "back_color.obj",
-              "ToolTip": "D:\\github_my\\CG_team_project\\practice111\\back_color.obj",
-              "RelativeToolTip": "back_color.obj",
-              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAENSURBVDhPjZPNDYMwDIVDxAlxYJR2hCKOSKzQEZiCaxmGIxIjtJu0B35upH4mrgCRlE8ydtLk2XFStafv\u002B8s4jm8YYjt9jDHGRguyuaoqAzslIqw3p2nKdkYkwAcLtNZdXddJ27b8g5BlmSrL8jPP8y2O45eIIYbXvs17ZC1MhAKU6Npss9vRAq1lL1WFPHIAUU9VCYl0GipQQzYBcdM0bAC\u002BKAqO94S2MRDpaJxgUsqjsz4xBsMw2GjbWDt1/IAo5uuEh63eh5mm6Y41Gh\u002BASqAIkyvaQ1nZo5H0CB9IxO/ABTLleW5HW\u002BQYvwpcSDNdTfQKRFEU0JGuFH7\u002BNtGHNHjVxPN/MuHolpRS6gsdswxexzQFmAAAAABJRU5ErkJggg==",
-              "WhenOpened": "2024-12-13T08:52:45.169Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 2,
               "Title": "prac.h",
               "DocumentMoniker": "D:\\github_my\\CG_team_project\\practice111\\prac.h",
               "RelativeDocumentMoniker": "prac.h",
@@ -105,22 +56,10 @@
               "RelativeDocumentMoniker": "demo.cpp",
               "ToolTip": "D:\\github_my\\CG_team_project\\practice111\\demo.cpp",
               "RelativeToolTip": "demo.cpp",
-              "ViewState": "AQIAADwBAAAAAAAAAAAUwFQBAAADAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAASAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-12-11T06:32:59.917Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "GL_My_header.h",
-              "DocumentMoniker": "D:\\github_my\\CG_team_project\\practice111\\GL_My_header.h",
-              "RelativeDocumentMoniker": "GL_My_header.h",
-              "ToolTip": "D:\\github_my\\CG_team_project\\practice111\\GL_My_header.h",
-              "RelativeToolTip": "GL_My_header.h",
-              "ViewState": "AQIAAJwAAAAAAAAAAAAAAMAAAAAIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-11T03:19:57.034Z"
             }
           ]
         }
