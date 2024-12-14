@@ -205,11 +205,13 @@ GLvoid SpecialKeyboard(int key, int x, int y) {
 	case GLUT_KEY_LEFT:
 		if (curr_lane > 1 && target_lane == curr_lane && !is_colliding) { // 레인 제한
 			target_lane -= 1;
+			rotate_car.y = 0;
 		}
 		break;
 	case GLUT_KEY_RIGHT:
 		if (curr_lane < 7 && target_lane == curr_lane && !is_colliding) { // 레인 제한
 			target_lane += 1;
+			rotate_car.y = 0;
 		}
 		break;
 	case GLUT_KEY_UP:
@@ -332,7 +334,10 @@ GLvoid move_car() {
 		
 		if (lane_coords[target_lane - 1] >= trans_car.x) {
 			rotate_car.y -= 5;
-			if(rotate_car.y == 0) curr_lane -= 1;
+			if (rotate_car.y <= 0) {
+				curr_lane -= 1;
+				rotate_car.y = 0;
+			}
 		}
 		else {
 			trans_car.x -= 0.5f;
@@ -342,7 +347,10 @@ GLvoid move_car() {
 	else if (curr_lane < target_lane) {	
 		if (lane_coords[target_lane - 1] <= trans_car.x) {
 			rotate_car.y += 5;
-			if (rotate_car.y == 0) curr_lane += 1;
+			if (rotate_car.y >= 0) {
+				curr_lane += 1;
+				rotate_car.y = 0;
+			}
 		}
 		else {
 			trans_car.x += 0.5f;
@@ -352,9 +360,9 @@ GLvoid move_car() {
 }
 
 GLvoid spin_car() {
-	rotate_car.y += 5;
+	rotate_car.y += 36;
 
-	if (rotate_car.y / 360 >= 1) {
+	if (rotate_car.y / 360 >= 2) {
 		is_colliding = FALSE;
 		rotate_car.y = 0;
 	}
