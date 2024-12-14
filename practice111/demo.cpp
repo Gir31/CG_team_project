@@ -203,12 +203,12 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 GLvoid SpecialKeyboard(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_LEFT:
-		if (curr_lane > 1 && target_lane == curr_lane) { // 레인 제한
+		if (curr_lane > 1 && target_lane == curr_lane && !is_colliding) { // 레인 제한
 			target_lane -= 1;
 		}
 		break;
 	case GLUT_KEY_RIGHT:
-		if (curr_lane < 7 && target_lane == curr_lane) { // 레인 제한
+		if (curr_lane < 7 && target_lane == curr_lane && !is_colliding) { // 레인 제한
 			target_lane += 1;
 		}
 		break;
