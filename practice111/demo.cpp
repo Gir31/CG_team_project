@@ -53,7 +53,7 @@ GLuint shaderProgramID;
 // 모델 변수
 Model* main_car = NULL;
 Model* obstacle_car[3] = { NULL, NULL, NULL };
-Model* item[2] = { NULL, NULL };
+Model* item[3] = { NULL, NULL, NULL };
 Model* background = NULL;
 size_t index_count = 0;
 
@@ -66,6 +66,8 @@ glm::vec3 rotate_car = glm::vec3(0, 0, 0);
 glm::vec3 trans_car = glm::vec3(0, 0, 5.f);
 
 GLfloat speed_value = 200, acceleration = -2;
+GLfloat oil_amount = 158;
+GLfloat car_distance = 0;
 
 GLboolean is_colliding = FALSE;
 GLboolean have_shield = FALSE;
@@ -83,10 +85,10 @@ glm::vec3 hovering_item_rotate[3] = { glm::vec3(0, 0, 0), glm::vec3(0, 120, 0), 
 glm::vec3 trans_background[2] = { glm::vec3(0, -5.f, -500.f), glm::vec3(0, -5.f, -1400.f) };
 
 float speed_bar[] = {
-	-80.f, -20.f, 0.f, 0.f, 0.f, 1.f,
-	-80.f, -34.f, 0.f, 0.f, 0.f, 1.f,
-	80.f, -34.f, 0.f, 0.f, 0.f, 1.f,
-	80.f, -20.f, 0.f, 0.f, 0.f, 1.f
+	-80.f, -18.f, 0.f, 0.f, 0.f, 1.f,
+	-80.f, -36.f, 0.f, 0.f, 0.f, 1.f,
+	80.f, -36.f, 0.f, 0.f, 0.f, 1.f,
+	80.f, -18.f, 0.f, 0.f, 0.f, 1.f
 };
 
 float speed[] = {
@@ -94,6 +96,20 @@ float speed[] = {
 	-5.5f, -34.f, 0.f, 0.f, 0.f, 1.f,
 	5.5f, -34.f, 0.f, 0.f, 0.f, 1.f,
 	5.5f, -20.f, 0.f, 0.f, 0.f, 1.f
+};
+
+float oil_bar[] = {
+	-80.f, -40.f, 0.f, 0.f, 0.f, 1.f,
+	-80.f, -45.f, 0.f, 0.f, 0.f, 1.f,
+	80.f, -45.f, 0.f, 0.f, 0.f, 1.f,
+	80.f, -40.f, 0.f, 0.f, 0.f, 1.f
+};
+
+float oil[] = {
+	-1.f, -41.f, 0.f, 0.f, 0.f, 1.f,
+	-1.f, -44.f, 0.f, 0.f, 0.f, 1.f,
+	1.f, -44.f, 0.f, 0.f, 0.f, 1.f,
+	1.f, -41.f, 0.f, 0.f, 0.f, 1.f
 };
 
 unsigned int transformLocation;
@@ -136,6 +152,9 @@ GLvoid moveItem();
 
 GLvoid hovering();
 GLvoid hovering_around_car_item();
+
+GLvoid draw_speed();
+GLvoid draw_oil();
 //========================================================
 
 void ConvertToWideChar(const char* source, WCHAR* dest, size_t destSize) {
@@ -204,6 +223,7 @@ int main(int argc, char** argv)
 	// 아이템
 	read_obj_file_with_mtl("coin.obj", &item[0]);
 	read_obj_file_with_mtl("shield.obj", &item[1]);
+	read_obj_file_with_mtl("dash.obj", &item[2]);
 	// 배경
 	read_obj_file_with_mtl("back_color.obj", &background);
 
@@ -230,6 +250,8 @@ GLvoid drawScene() {
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glViewport(0, 0, 800, 800);
 
 	Perspective_Projection_Transformation(projection, spaceTrans, shaderProgramID);
 	cameraTranslation(transCamera, rotateCamera);
@@ -264,6 +286,42 @@ GLvoid drawScene() {
 	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(bar));
 	initBuffer_(speed_bar, glm::vec3(1, 1, 1));
 	glDrawArrays(GL_QUADS, 0, 24);
+
+	draw_speed();
+
+	bar = translation_shape(glm::vec3(0, 0, 100.f));
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(bar));
+	initBuffer_(oil_bar, glm::vec3(1, 1, 1));
+	glDrawArrays(GL_QUADS, 0, 24);
+
+	draw_oil();
+
+	// 미니맵 
+	glViewport(500, 500, 300, 300);
+	Orthogoanl_Projection_Transformation(100.0f, shaderProgramID);
+
+	glm::mat4 view = glm::mat4(1.0f);
+	view = rotate_camera(glm::vec3(90, 0, 0)) * trans_camera(glm::vec3(0, 0, 50.f));
+
+	unsigned int viewLocation = glGetUniformLocation(shaderProgramID, "view");
+	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
+
+	// 주인공(car_s) 그리기
+	main_car_model = translation_shape(trans_car) * rotate_shape(rotate_car);
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(main_car_model));
+	draw_model(main_car);
+
+	for (int i = 0; i < 2; i++) {
+		glm::mat4 background_model = glm::mat4(1.f);
+		background_model = translation_shape(trans_background[i]) * rotate_shape(glm::vec3(0, 90, 0)) * scaling_shape(glm::vec3(2, 2, 2));
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(background_model));
+		draw_model(background);
+	}
+
+	drawObstacle();
+	drawItem();
+
+	if (have_shield) hovering_around_car_item();
 
 	glutSwapBuffers();
 }
@@ -396,6 +454,16 @@ GLvoid TimerFunction(int value) {
 	moveObstacle();
 	moveItem();
 
+	oil_amount -= 0.1;
+
+	car_distance += speed_value;
+
+	if ((int)car_distance / 100000 > 1) {
+		oil_amount += 80;
+		car_distance = 0;
+		if (oil_amount > 156) oil_amount = 156;
+	}
+
 	glutPostRedisplay();
 	glutTimerFunc(10, TimerFunction, 1);
 }
@@ -463,16 +531,25 @@ GLvoid initBuffer_(const float* list, glm::vec3 color) {
 }
 
 GLvoid draw_speed() {
-	int speed_count = (int)speed_value / 50;
+	int speed_count = (int)speed_value / 49;
 
 	for (int i = 0; i < speed_count; i++) {
-
+		glm::mat4 bar = glm::mat4(1.f);
+		bar = translation_shape(glm::vec3(-71.5 + (i * 11), 0, 101.f));
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(bar));
+		initBuffer_(speed, glm::vec3(0, 0.5, 1));
+		glDrawArrays(GL_QUADS, 0, 24);
 	}
-	glm::mat4 bar = glm::mat4(1.f);
-	bar = translation_shape(glm::vec3(0, 0, 100.f));
-	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(bar));
-	initBuffer_(speed_bar, glm::vec3(1, 1, 1));
-	glDrawArrays(GL_QUADS, 0, 24);
+}
+
+GLvoid draw_oil() {
+	for (int i = 0; i < oil_amount/2; i++) {
+		glm::mat4 bar = glm::mat4(1.f);
+		bar = translation_shape(glm::vec3(-78.f + (i * 2), 0, 101.f));
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(bar));
+		initBuffer_(oil, glm::vec3(0, 0, 0));
+		glDrawArrays(GL_QUADS, 0, 24);
+	}
 }
 
 GLvoid draw_model(Model* model) {
@@ -509,6 +586,11 @@ GLvoid speed_camera_move() {
 
 	if (speed_value >= MAX_SPEED) speed_value = MAX_SPEED; 
 	else if (speed_value < MIN_SPEED) speed_value = 1;
+
+	if (oil_amount < 1) {
+		oil_amount = 0;
+		speed_value = 5;
+	}
 
 	transCamera.z = ((GLfloat)speed_value / 4);
 	transCamera.y = transCamera.z * 3 / 10;
@@ -698,6 +780,7 @@ GLvoid moveObstacle() {
 				rotate_car.y = 0;
 				is_colliding = TRUE;
 				speed_value -= 150;
+				oil_amount -= 30;
 
 				PlayPreloadedEffectSound("crush");
 			}
@@ -720,7 +803,7 @@ GLvoid createItem() {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> lane_dist(1, MAX_LANE);
-	std::uniform_int_distribution<int> item_type(0, 1);
+	std::uniform_int_distribution<int> item_type(0, 2);
 	std::uniform_real_distribution<float> z_dist(-900.0f, -700.0f); // 장애물 생성 범위를 -900 ~ -700으로 확장
 
 	ITEM* newItem = (ITEM*)malloc(sizeof(ITEM)); 
@@ -796,14 +879,18 @@ GLvoid moveItem() {
 
 			switch (curr->type) {
 			case 0:
-				dash = TRUE;
-				PlayPreloadedEffectSound("wee");
-				dash_timer = clock();
+				oil_amount += 20;
+				if (oil_amount > 156) oil_amount = 156;
 				break;
 			case 1:
 				have_shield = TRUE;
 				PlayPreloadedEffectSound("wee");
 
+				break;
+			case 2:
+				dash = TRUE;
+				PlayPreloadedEffectSound("wee");
+				dash_timer = clock();
 				break;
 			}
 
