@@ -35,7 +35,7 @@ void main ()
 	vec3 specular = specularLight * lightColor; //--- 거울 반사 조명값: 거울반사값 * 조명색상값
 	
 	// Combine all lighting components
-	vec3 result = (ambient * Ka + diffuse * Kd + specular * Ks); //--- 최종 조명 설정된 픽셀 색상: (주변+산란반사+거울반사조명)*객체 색상
+	vec3 result = (ambient * Ka + diffuse * Kd + specular * Ks) * objectColor; //--- 최종 조명 설정된 픽셀 색상: (주변+산란반사+거울반사조명)*객체 색상
 
 	FragColor = vec4 (result, 1.0); // --- 픽셀 색을 출력
 }

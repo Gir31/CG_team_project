@@ -82,7 +82,19 @@ glm::vec3 hovering_item_rotate[3] = { glm::vec3(0, 0, 0), glm::vec3(0, 120, 0), 
 // 배경 변수
 glm::vec3 trans_background[2] = { glm::vec3(0, -5.f, -500.f), glm::vec3(0, -5.f, -1400.f) };
 
-// 글자
+float speed_bar[] = {
+	-80.f, -20.f, 0.f, 0.f, 0.f, 1.f,
+	-80.f, -34.f, 0.f, 0.f, 0.f, 1.f,
+	80.f, -34.f, 0.f, 0.f, 0.f, 1.f,
+	80.f, -20.f, 0.f, 0.f, 0.f, 1.f
+};
+
+float speed[] = {
+	-80.f, -20.f, 0.f, 0.f, 0.f, 1.f,
+	-80.f, -34.f, 0.f, 0.f, 0.f, 1.f,
+	80.f, -34.f, 0.f, 0.f, 0.f, 1.f,
+	80.f, -20.f, 0.f, 0.f, 0.f, 1.f
+};
 
 unsigned int transformLocation;
 
@@ -98,6 +110,7 @@ GLvoid SpecialKeyboard(int key, int x, int y);
 GLvoid TimerFunction(int value);
 void make_shaderProgram();
 GLvoid initBuffer(const Model* model);
+GLvoid initBuffer_(const float* list, glm::vec3 color);
 //========================================================
 // 사용자 지정 함수
 GLvoid draw_model(Model* model);
@@ -243,6 +256,14 @@ GLvoid drawScene() {
 	drawItem();
 
 	if(have_shield) hovering_around_car_item();
+
+	Orthogoanl_Projection_Transformation(100.f, shaderProgramID);
+
+	glm::mat4 bar = glm::mat4(1.f);
+	bar = translation_shape(glm::vec3(0, 0, 100.f));
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(bar));
+	initBuffer_(speed_bar, glm::vec3(1, 1, 1));
+	glDrawArrays(GL_QUADS, 0, 24);
 
 	glutSwapBuffers();
 }
@@ -399,6 +420,8 @@ GLvoid initBuffer(const Model* model) {
 	glUniform3f(lightColorLocation, 1.0, 1.0, 1.0);
 	unsigned int viewPosLocation = glGetUniformLocation(shaderProgramID, "viewPos"); //--- viewPos 값 전달: 카메라 위치
 	glUniform3f(viewPosLocation, transCamera.x, transCamera.y, transCamera.z);
+	unsigned int objectColorLocation = glGetUniformLocation(shaderProgramID, "objectColor"); //--- objectcolor 값 전달: 오브젝트 컬러
+	glUniform3f(objectColorLocation, 1, 1, 1);
 
 	unsigned int material_ambient = glGetUniformLocation(shaderProgramID, "Ka"); //--- model의 ambient 값 전달
 	glUniform3f(material_ambient, model->material.Ka[0], model->material.Ka[1], model->material.Ka[2]);
@@ -407,6 +430,38 @@ GLvoid initBuffer(const Model* model) {
 	unsigned int material_specular = glGetUniformLocation(shaderProgramID, "Ks"); //--- model의 specular 값 전달
 	glUniform3f(material_specular, model->material.Ks[0], model->material.Ks[1], model->material.Ks[2]);
 }
+
+GLvoid initBuffer_(const float* list, glm::vec3 color) {
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), list, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); //--- 위치 속성
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); //--- 노말 속성
+	glEnableVertexAttribArray(1);
+
+	glUseProgram(shaderProgramID);
+	unsigned int lightPosLocation = glGetUniformLocation(shaderProgramID, "lightPos"); //--- lightPos 값 전달: (0.0, 0.0, 5.0);
+	glUniform3f(lightPosLocation, 0.0, 0.0, 150.0);
+	unsigned int lightColorLocation = glGetUniformLocation(shaderProgramID, "lightColor"); //--- lightColor 값 전달: (1.0, 1.0, 1.0) 백색
+	glUniform3f(lightColorLocation, 1.0, 1.0, 1.0);
+	unsigned int viewPosLocation = glGetUniformLocation(shaderProgramID, "viewPos"); //--- viewPos 값 전달: 카메라 위치
+	glUniform3f(viewPosLocation, transCamera.x, transCamera.y, transCamera.z);
+	unsigned int objectColorLocation = glGetUniformLocation(shaderProgramID, "objectColor"); //--- objectcolor 값 전달: 오브젝트 컬러
+	glUniform3f(objectColorLocation, color.x, color.y, color.z);
+
+	unsigned int material_ambient = glGetUniformLocation(shaderProgramID, "Ka"); //--- model의 ambient 값 전달
+	glUniform3f(material_ambient, 1, 1, 1);
+	unsigned int material_diffuse = glGetUniformLocation(shaderProgramID, "Kd"); //--- model의 diffuse 값 전달
+	glUniform3f(material_diffuse, 1, 1, 1);
+	unsigned int material_specular = glGetUniformLocation(shaderProgramID, "Ks"); //--- model의 specular 값 전달
+	glUniform3f(material_specular, 1, 1, 1);
+}
+
 
 GLvoid draw_model(Model* model) {
 	Model* curr_model = model;
