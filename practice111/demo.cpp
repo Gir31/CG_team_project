@@ -1,11 +1,21 @@
 ﻿#include "GL_My_header.h"
 #include "obj_reader.h"
 #include <time.h>
+#pragma comment(lib, "winmm")
+#include <mmsystem.h>
+#include <windows.h>
 //========================================================
 #define PI 3.141592f
 #define MAX_LANE 7
 #define MAX_SPEED 700 // 최고 속도
 #define MIN_SPEED 1 // 최저 속도
+#define SOUND_FILE_NAME_WEE "Whoosh-4.wav"
+#define SOUND_FILE_NAME_BOOM "Boom-Short.wav"
+#define SOUND_FILE_NAME_CRUSH "Crash-Rock-Crash-RockImpact-02.wav"
+#define SOUND_FILE_NAME_CRUSH2 "Crash-Glass-Crash-07.wav"//no
+#define SOUND_FILE_NAME_BGM "champion-upbeat-motivation-advertising-rock-251285.wav"
+#define SOUND_FILE_NAME_CLAXON "Claxon-2.wav"
+
 
 typedef struct obstacle {
 
@@ -115,9 +125,53 @@ GLvoid hovering();
 GLvoid hovering_around_car_item();
 //========================================================
 
+void ConvertToWideChar(const char* source, WCHAR* dest, size_t destSize) {
+	MultiByteToWideChar(CP_ACP, 0, source, -1, dest, static_cast<int>(destSize));
+}
+
+// 효과음을 미리 로드하는 함수
+void PreloadEffectSound(const char* soundFile, const char* alias) {
+	WCHAR wideCommand[256];
+	WCHAR wideSoundFile[256];
+
+	// 멀티바이트 -> 유니코드 변환
+	ConvertToWideChar(soundFile, wideSoundFile, 256);
+
+	// 사운드 파일 미리 열기
+	wsprintf(wideCommand, L"open \"%s\" type waveaudio alias %s", wideSoundFile, alias);
+	mciSendString(wideCommand, NULL, 0, NULL);
+}
+
+// 미리 로드된 효과음을 재생하는 함수
+void PlayPreloadedEffectSound(const char* alias) {
+	WCHAR wideCommand[256];
+
+	// 미리 열린 alias를 재생
+	wsprintf(wideCommand, L"play %s from 0", alias);
+	mciSendString(wideCommand, NULL, 0, NULL);
+}
+
+// 미리 로드된 효과음을 닫는 함수
+void ClosePreloadedEffectSound(const char* alias) {
+	WCHAR wideCommand[256];
+
+	// alias 닫기
+	wsprintf(wideCommand, L"close %s", alias);
+	mciSendString(wideCommand, NULL, 0, NULL);
+}
+
+
+
 int main(int argc, char** argv)
 {
+	PlaySound(TEXT(SOUND_FILE_NAME_BGM), NULL, SND_ASYNC | SND_ALIAS| SND_LOOP);
+	// 효과음 미리 로드
+	PreloadEffectSound(SOUND_FILE_NAME_CLAXON, "claxon");
+	PreloadEffectSound(SOUND_FILE_NAME_CRUSH, "crush");
+	PreloadEffectSound(SOUND_FILE_NAME_WEE, "wee");
 
+	// 시작 시 경적 소리 재생
+	PlayPreloadedEffectSound("claxon");
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);
@@ -150,6 +204,11 @@ int main(int argc, char** argv)
 	glutTimerFunc(10, TimerFunction, 1);
 
 	glutMainLoop();
+
+	// 프로그램 종료 시 효과음 닫기
+	ClosePreloadedEffectSound("claxon");
+	ClosePreloadedEffectSound("crush");
+	ClosePreloadedEffectSound("wee");
 }
 
 GLvoid drawScene() {
@@ -428,6 +487,12 @@ GLvoid move_car() {
 GLvoid spin_car() {
 	static float rc_value = 2;
 
+	// 충돌 시 효과음 재생
+	static bool sound_played = false;
+	if (!sound_played) {
+		PlayPreloadedEffectSound("crush");
+	}
+
 	rotate_car.y += 18;
 	rotateCamera.x += rc_value;
 
@@ -437,9 +502,9 @@ GLvoid spin_car() {
 		is_colliding = FALSE;
 		rotate_car.y = 0;
 		rotateCamera.x = 0;
+		sound_played = false; // 스핀 종료 후 다시 효과음 재생 가능
 	}
 }
-
 GLvoid move_background() {
 	for (int i = 0; i < 2; i++) {
 		trans_background[i].z += speed_value / 100.f;
@@ -669,10 +734,13 @@ GLvoid moveItem() {
 			switch (curr->type) {
 			case 0:
 				dash = TRUE;
+				PlayPreloadedEffectSound("wee");
 				dash_timer = clock();
 				break;
 			case 1:
 				have_shield = TRUE;
+				PlayPreloadedEffectSound("wee");
+
 				break;
 			}
 
