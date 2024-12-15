@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\github_my\\CG_team_project\\practice111\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_my\\CG_team_project\\practice111\\demo.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:demo.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_my\\CG_team_project\\practice111\\fragment.glsl||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:fragment.glsl||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_my\\CG_team_project\\practice111\\demo.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|solutionrelative:demo.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{87169EDC-0578-442A-A74A-340EB37EB1B5}|practice111.vcxproj|D:\\github_my\\CG_team_project\\practice111\\vertex.glsl||{8B382828-6202-11D1-8870-0000F87579D2}",
@@ -26,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 171,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
@@ -42,15 +42,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "fragment.glsl",
               "DocumentMoniker": "D:\\github_my\\CG_team_project\\practice111\\fragment.glsl",
               "RelativeDocumentMoniker": "fragment.glsl",
               "ToolTip": "D:\\github_my\\CG_team_project\\practice111\\fragment.glsl",
               "RelativeToolTip": "fragment.glsl",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACUAAABLAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAQAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-12-13T09:01:52.046Z"
+              "WhenOpened": "2024-12-13T09:01:52.046Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -66,16 +67,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "demo.cpp",
               "DocumentMoniker": "D:\\github_my\\CG_team_project\\practice111\\demo.cpp",
               "RelativeDocumentMoniker": "demo.cpp",
               "ToolTip": "D:\\github_my\\CG_team_project\\practice111\\demo.cpp",
               "RelativeToolTip": "demo.cpp",
-              "ViewState": "AQIAAG4DAAAAAAAAAAAYwIkDAAADAAAA",
+              "ViewState": "AQIAAGcDAAAAAAAAAAAiwIkDAAADAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-11T06:32:59.917Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-11T06:32:59.917Z"
             }
           ]
         }
