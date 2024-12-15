@@ -90,10 +90,10 @@ float speed_bar[] = {
 };
 
 float speed[] = {
-	-80.f, -20.f, 0.f, 0.f, 0.f, 1.f,
-	-80.f, -34.f, 0.f, 0.f, 0.f, 1.f,
-	80.f, -34.f, 0.f, 0.f, 0.f, 1.f,
-	80.f, -20.f, 0.f, 0.f, 0.f, 1.f
+	-5.5f, -20.f, 0.f, 0.f, 0.f, 1.f,
+	-5.5f, -34.f, 0.f, 0.f, 0.f, 1.f,
+	5.5f, -34.f, 0.f, 0.f, 0.f, 1.f,
+	5.5f, -20.f, 0.f, 0.f, 0.f, 1.f
 };
 
 unsigned int transformLocation;
@@ -462,6 +462,18 @@ GLvoid initBuffer_(const float* list, glm::vec3 color) {
 	glUniform3f(material_specular, 1, 1, 1);
 }
 
+GLvoid draw_speed() {
+	int speed_count = (int)speed_value / 50;
+
+	for (int i = 0; i < speed_count; i++) {
+
+	}
+	glm::mat4 bar = glm::mat4(1.f);
+	bar = translation_shape(glm::vec3(0, 0, 100.f));
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(bar));
+	initBuffer_(speed_bar, glm::vec3(1, 1, 1));
+	glDrawArrays(GL_QUADS, 0, 24);
+}
 
 GLvoid draw_model(Model* model) {
 	Model* curr_model = model;
@@ -542,12 +554,6 @@ GLvoid move_car() {
 GLvoid spin_car() {
 	static float rc_value = 2;
 
-	// 충돌 시 효과음 재생
-	static bool sound_played = false;
-	if (!sound_played) {
-		PlayPreloadedEffectSound("crush");
-	}
-
 	rotate_car.y += 18;
 	rotateCamera.x += rc_value;
 
@@ -557,9 +563,9 @@ GLvoid spin_car() {
 		is_colliding = FALSE;
 		rotate_car.y = 0;
 		rotateCamera.x = 0;
-		sound_played = false; // 스핀 종료 후 다시 효과음 재생 가능
 	}
 }
+
 GLvoid move_background() {
 	for (int i = 0; i < 2; i++) {
 		trans_background[i].z += speed_value / 100.f;
@@ -692,6 +698,8 @@ GLvoid moveObstacle() {
 				rotate_car.y = 0;
 				is_colliding = TRUE;
 				speed_value -= 150;
+
+				PlayPreloadedEffectSound("crush");
 			}
 			else have_shield = FALSE;
 		}
